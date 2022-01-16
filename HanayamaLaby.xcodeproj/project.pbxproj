@@ -13,6 +13,8 @@
 		4AA6CC5527937D2700E10CED /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4AA6CC5327937D2700E10CED /* Main.storyboard */; };
 		4AA6CC5727937D2800E10CED /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4AA6CC5627937D2800E10CED /* Assets.xcassets */; };
 		4AA6CC5A27937D2800E10CED /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4AA6CC5827937D2800E10CED /* LaunchScreen.storyboard */; };
+		4AA6CC632793D9A200E10CED /* PuzzleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AA6CC622793D9A200E10CED /* PuzzleView.swift */; };
+		4AA6CC662793D9BE00E10CED /* Puzzle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AA6CC652793D9BE00E10CED /* Puzzle.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +26,8 @@
 		4AA6CC5627937D2800E10CED /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4AA6CC5927937D2800E10CED /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		4AA6CC5B27937D2800E10CED /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4AA6CC622793D9A200E10CED /* PuzzleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PuzzleView.swift; sourceTree = "<group>"; };
+		4AA6CC652793D9BE00E10CED /* Puzzle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Puzzle.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +62,8 @@
 			children = (
 				4AA6CC5327937D2700E10CED /* Main.storyboard */,
 				4AA6CC5127937D2700E10CED /* ViewController.swift */,
+				4AA6CC672793D9C500E10CED /* Model */,
+				4AA6CC642793D9A900E10CED /* View */,
 				4AA6CC6127937D4A00E10CED /* Supporting Files */,
 				4AA6CC5B27937D2800E10CED /* Info.plist */,
 			);
@@ -73,6 +79,22 @@
 				4AA6CC5827937D2800E10CED /* LaunchScreen.storyboard */,
 			);
 			path = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		4AA6CC642793D9A900E10CED /* View */ = {
+			isa = PBXGroup;
+			children = (
+				4AA6CC622793D9A200E10CED /* PuzzleView.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		4AA6CC672793D9C500E10CED /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				4AA6CC652793D9BE00E10CED /* Puzzle.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -146,6 +168,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4AA6CC662793D9BE00E10CED /* Puzzle.swift in Sources */,
+				4AA6CC632793D9A200E10CED /* PuzzleView.swift in Sources */,
 				4AA6CC5227937D2700E10CED /* ViewController.swift in Sources */,
 				4AA6CC4E27937D2700E10CED /* AppDelegate.swift in Sources */,
 				4AA6CC5027937D2700E10CED /* SceneDelegate.swift in Sources */,

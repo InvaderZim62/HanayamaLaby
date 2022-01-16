@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
-    <device id="retina4_7" orientation="landscape" appearance="light"/>
+    <device id="retina6_1" orientation="landscape" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
@@ -14,62 +14,57 @@
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="HanayamaLaby" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="667" height="375"/>
+                        <rect key="frame" x="0.0" y="0.0" width="896" height="414"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <stackView opaque="NO" contentMode="scaleToFill" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="i8r-dq-Q5S">
-                                <rect key="frame" x="63.5" y="57.5" width="540" height="260"/>
-                                <subviews>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7yn-HX-1nw">
-                                        <rect key="frame" x="0.0" y="0.0" width="260" height="260"/>
-                                        <subviews>
-                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="puzzle back" translatesAutoresizingMaskIntoConstraints="NO" id="vcA-HR-kYE">
-                                                <rect key="frame" x="0.0" y="0.0" width="260" height="260"/>
-                                            </imageView>
-                                        </subviews>
-                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                        <constraints>
-                                            <constraint firstAttribute="bottom" secondItem="vcA-HR-kYE" secondAttribute="bottom" id="15n-5i-3dQ"/>
-                                            <constraint firstAttribute="width" secondItem="7yn-HX-1nw" secondAttribute="height" multiplier="1:1" id="INd-JB-aB2"/>
-                                            <constraint firstItem="vcA-HR-kYE" firstAttribute="top" secondItem="7yn-HX-1nw" secondAttribute="top" id="WBy-vu-aHH"/>
-                                            <constraint firstAttribute="trailing" secondItem="vcA-HR-kYE" secondAttribute="trailing" id="YLB-1l-5XL"/>
-                                            <constraint firstAttribute="width" constant="260" id="bCg-3o-em2"/>
-                                            <constraint firstItem="vcA-HR-kYE" firstAttribute="leading" secondItem="7yn-HX-1nw" secondAttribute="leading" id="bDd-8d-LJJ"/>
-                                        </constraints>
-                                    </view>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wam-0n-7gj">
-                                        <rect key="frame" x="280" y="0.0" width="260" height="260"/>
-                                        <subviews>
-                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="puzzle front" translatesAutoresizingMaskIntoConstraints="NO" id="W9v-9m-YHv">
-                                                <rect key="frame" x="0.0" y="0.0" width="260" height="260"/>
-                                            </imageView>
-                                        </subviews>
-                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                        <constraints>
-                                            <constraint firstItem="W9v-9m-YHv" firstAttribute="top" secondItem="wam-0n-7gj" secondAttribute="top" id="lib-5y-8wG"/>
-                                            <constraint firstAttribute="trailing" secondItem="W9v-9m-YHv" secondAttribute="trailing" id="p5j-sG-bvR"/>
-                                            <constraint firstAttribute="width" secondItem="wam-0n-7gj" secondAttribute="height" multiplier="1:1" id="pJz-hh-UCA"/>
-                                            <constraint firstAttribute="bottom" secondItem="W9v-9m-YHv" secondAttribute="bottom" id="rw8-4O-bZr"/>
-                                            <constraint firstItem="W9v-9m-YHv" firstAttribute="leading" secondItem="wam-0n-7gj" secondAttribute="leading" id="xQx-Rq-xWX"/>
-                                        </constraints>
-                                    </view>
-                                </subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="puzzle back" translatesAutoresizingMaskIntoConstraints="NO" id="vcA-HR-kYE">
+                                <rect key="frame" x="178" y="77" width="260" height="260"/>
                                 <constraints>
-                                    <constraint firstItem="wam-0n-7gj" firstAttribute="width" secondItem="7yn-HX-1nw" secondAttribute="width" id="uFS-P4-CzG"/>
+                                    <constraint firstAttribute="height" constant="260" id="4KV-gQ-8eJ"/>
+                                    <constraint firstAttribute="width" constant="260" id="ilI-lU-o0B"/>
                                 </constraints>
-                            </stackView>
+                            </imageView>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="puzzle front" translatesAutoresizingMaskIntoConstraints="NO" id="W9v-9m-YHv">
+                                <rect key="frame" x="458" y="77" width="260" height="260"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="260" id="PFh-hh-bva"/>
+                                    <constraint firstAttribute="width" constant="260" id="hUN-H8-Xgd"/>
+                                </constraints>
+                            </imageView>
+                            <view alpha="0.5" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8ed-Bh-aOY" customClass="PuzzleView" customModule="HanayamaLaby" customModuleProvider="target">
+                                <rect key="frame" x="178" y="77" width="260" height="260"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            </view>
+                            <view alpha="0.5" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uMc-te-h9a" customClass="PuzzleView" customModule="HanayamaLaby" customModuleProvider="target">
+                                <rect key="frame" x="458" y="77" width="260" height="260"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            </view>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="i8r-dq-Q5S" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="lss-dl-fNv"/>
-                            <constraint firstItem="i8r-dq-Q5S" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="zGS-7p-ND2"/>
+                            <constraint firstItem="uMc-te-h9a" firstAttribute="top" secondItem="W9v-9m-YHv" secondAttribute="top" id="2lv-Kb-OZp"/>
+                            <constraint firstItem="uMc-te-h9a" firstAttribute="leading" secondItem="W9v-9m-YHv" secondAttribute="leading" id="4Aw-DE-tzg"/>
+                            <constraint firstItem="vcA-HR-kYE" firstAttribute="bottom" secondItem="8ed-Bh-aOY" secondAttribute="bottom" id="9bp-VU-9fJ"/>
+                            <constraint firstItem="uMc-te-h9a" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="FaR-Dl-mBq"/>
+                            <constraint firstItem="W9v-9m-YHv" firstAttribute="bottom" secondItem="uMc-te-h9a" secondAttribute="bottom" id="MMe-Ev-Dla"/>
+                            <constraint firstItem="W9v-9m-YHv" firstAttribute="trailing" secondItem="uMc-te-h9a" secondAttribute="trailing" id="VFM-aT-WVh"/>
+                            <constraint firstItem="8ed-Bh-aOY" firstAttribute="leading" secondItem="vcA-HR-kYE" secondAttribute="leading" id="ZzE-yQ-PgH"/>
+                            <constraint firstItem="uMc-te-h9a" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" constant="140" id="auL-jK-aIj"/>
+                            <constraint firstItem="8ed-Bh-aOY" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" constant="-140" id="cj9-wP-ut1"/>
+                            <constraint firstItem="8ed-Bh-aOY" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="eeO-2M-gRp"/>
+                            <constraint firstItem="8ed-Bh-aOY" firstAttribute="top" secondItem="vcA-HR-kYE" secondAttribute="top" id="kzh-jp-koo"/>
+                            <constraint firstItem="vcA-HR-kYE" firstAttribute="trailing" secondItem="8ed-Bh-aOY" secondAttribute="trailing" id="xUg-70-Pa9"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="backPuzzleView" destination="8ed-Bh-aOY" id="4vK-Sg-K2p"/>
+                        <outlet property="frontPuzzleView" destination="uMc-te-h9a" id="DXl-e5-PD2"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="114.69265367316342" y="117.59999999999999"/>
+            <point key="canvasLocation" x="114.50892857142857" y="117.39130434782609"/>
         </scene>
     </scenes>
     <resources>
