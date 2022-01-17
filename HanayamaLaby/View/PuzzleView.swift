@@ -7,6 +7,11 @@
 
 import UIKit
 
+struct PuzzleConst {
+    static let wallWidth: CGFloat = 10
+    static let wallColor = #colorLiteral(red: 0.8078431487, green: 0.02745098062, blue: 0.3333333433, alpha: 1)
+}
+
 class PuzzleView: UIView {
     
     var ringRadiusFactors = [Double]()
@@ -31,8 +36,8 @@ class PuzzleView: UIView {
             let line = UIBezierPath()
             line.move(to: innerEnd)
             line.addLine(to: outerEnd)
-            line.lineWidth = 5
-            UIColor.red.setStroke()
+            line.lineWidth = PuzzleConst.wallWidth
+            PuzzleConst.wallColor.setStroke()
             line.stroke()
         }
     }
@@ -40,14 +45,30 @@ class PuzzleView: UIView {
     private func drawArcs() {
         for arc in arcs {
             let radius = ringRadiusFactors[arc.ring] * bounds.width / 2
-            let arc = UIBezierPath(arcCenter: puzzleCenter,
-                                   radius: radius,
-                                   startAngle: arc.startAngle,
-                                   endAngle: arc.endAngle,
-                                   clockwise: true)
-            arc.lineWidth = 5
-            UIColor.red.setStroke()
-            arc.stroke()
+            let line = UIBezierPath(arcCenter: puzzleCenter,
+                                    radius: radius,
+                                    startAngle: arc.startAngle,
+                                    endAngle: arc.endAngle,
+                                    clockwise: true)
+            line.lineWidth = PuzzleConst.wallWidth
+            PuzzleConst.wallColor.setStroke()
+            line.stroke()
+            let startPoint = CGPoint(x: puzzleCenter.x + radius * cos(arc.startAngle),
+                                     y: puzzleCenter.y + radius * sin(arc.startAngle))
+            drawWallEndAtPoint(startPoint)
+            let endPoint = CGPoint(x: puzzleCenter.x + radius * cos(arc.endAngle),
+                                   y: puzzleCenter.y + radius * sin(arc.endAngle))
+            drawWallEndAtPoint(endPoint)
         }
+    }
+    
+    private func drawWallEndAtPoint(_ point: CGPoint) {
+        let circle = UIBezierPath(arcCenter: point,
+                                  radius: PuzzleConst.wallWidth / 2,
+                                  startAngle: 0,
+                                  endAngle: 2 * CGFloat.pi,
+                                  clockwise: true)
+        PuzzleConst.wallColor.setFill()
+        circle.fill()
     }
 }

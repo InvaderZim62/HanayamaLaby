@@ -31,13 +31,13 @@
                                     <constraint firstAttribute="width" constant="260" id="hUN-H8-Xgd"/>
                                 </constraints>
                             </imageView>
-                            <view alpha="0.5" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8ed-Bh-aOY" customClass="PuzzleView" customModule="HanayamaLaby" customModuleProvider="target">
+                            <view alpha="0.40000000000000002" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8ed-Bh-aOY" customClass="PuzzleView" customModule="HanayamaLaby" customModuleProvider="target">
                                 <rect key="frame" x="178" y="77" width="260" height="260"/>
-                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
-                            <view alpha="0.5" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uMc-te-h9a" customClass="PuzzleView" customModule="HanayamaLaby" customModuleProvider="target">
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uMc-te-h9a" customClass="PuzzleView" customModule="HanayamaLaby" customModuleProvider="target">
                                 <rect key="frame" x="458" y="77" width="260" height="260"/>
-                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
