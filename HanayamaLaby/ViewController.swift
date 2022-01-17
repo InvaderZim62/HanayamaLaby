@@ -52,12 +52,18 @@ class ViewController: UIViewController {
         ]
     )
 
+    let probeView = ProbeView()
+
     @IBOutlet weak var backPuzzleView: PuzzleView!
     @IBOutlet weak var frontPuzzleView: PuzzleView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.addSubview(backPuzzleView)
+        createProbeView()
+        
+        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(screenPanned))
+        view.addGestureRecognizer(panGesture)
     }
     
     override func viewDidLayoutSubviews() {
@@ -69,5 +75,22 @@ class ViewController: UIViewController {
         backPuzzleView.ringRadiusFactors = backPuzzle.ringRadiusFactors
         backPuzzleView.spokes = backPuzzle.spokes
         backPuzzleView.arcs = backPuzzle.arcs
+        probeView.center = backPuzzleView.center
+    }
+    
+    private func createProbeView() {
+        probeView.frame = CGRect(x: 0, y: 0, width: 2 * ProbeConst.probeRadius, height: 2 * ProbeConst.probeRadius)
+        view.addSubview(probeView)
+    }
+    
+    @objc private func screenPanned(recognizer: UIPanGestureRecognizer) {
+        let translation = recognizer.translation(in: view)
+        let positionInViewCoords = (probeView.center + translation).limitedToView(view, withInset: 20)
+        let positionInPuzzleViewCoords = view.convert(positionInViewCoords, to: backPuzzleView)
+        if !backPuzzleView.wallPath.contains(positionInPuzzleViewCoords) {
+            // position not inside a wall (allow it to move)
+            probeView.center = positionInViewCoords
+        }
+        recognizer.setTranslation(.zero, in: view)
     }
 }

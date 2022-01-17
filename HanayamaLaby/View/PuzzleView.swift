@@ -19,8 +19,8 @@ class PuzzleView: UIView {
     var spokes = [Spoke]()
     var arcs = [Arc]()
     
+    private(set) var wallPath = UIBezierPath()
     private lazy var puzzleCenter = CGPoint(x: bounds.midX, y: bounds.midY)
-//    private lazy var wholeView = UIBezierPath(rect: bounds)  // whole view to append holes in
     
     // rotate about point by translating (from 0,0) to point, rotating, and translating back
     private func transformToRotate(angle: Double, about point: CGPoint) -> CGAffineTransform {
@@ -32,10 +32,10 @@ class PuzzleView: UIView {
         drawSpokes()
         drawArcs()
         
-//        let mask = CAShapeLayer()
-//        mask.fillRule = .evenOdd
-//        mask.path = wholeView.cgPath
-//        layer.mask = mask
+        PuzzleConst.wallColor.setFill()
+        wallPath.fill()
+//        UIColor.black.setStroke()
+//        wallPath.stroke()
     }
     
     private func drawFloor() {
@@ -46,19 +46,32 @@ class PuzzleView: UIView {
                                   clockwise: true)
         PuzzleConst.floorColor.setFill()
         circle.fill()
+        // remove center hole
+        if let radiusFactor = ringRadiusFactors.first {  // since called before ringRadiusFactors is set
+            let radius = 0.96 * (radiusFactor * bounds.width / 2 - PuzzleConst.wallWidth / 2)
+            let hole = UIBezierPath(arcCenter: puzzleCenter,
+                                    radius: radius,
+                                    startAngle: 0,
+                                    endAngle: 2 * CGFloat.pi,
+                                    clockwise: true)
+            let wholeView = UIBezierPath(rect: bounds)  // whole view to append holes in
+            wholeView.append(hole)
+            let mask = CAShapeLayer()
+            mask.fillRule = .evenOdd
+            mask.path = wholeView.cgPath
+            layer.mask = mask
+        }
     }
     
     private func drawSpokes() {
         let halfWidth = PuzzleConst.wallWidth / 2
         for spoke in spokes {
-            let innerRadius = ringRadiusFactors[spoke.innerRing] * bounds.width / 2 + halfWidth
-            let outerRadius = ringRadiusFactors[spoke.outerRing] * bounds.width / 2 - halfWidth
+            let innerRadius = ringRadiusFactors[spoke.innerRing] * bounds.width / 2
+            let outerRadius = ringRadiusFactors[spoke.outerRing] * bounds.width / 2
             let rect = CGRect(x: puzzleCenter.x + innerRadius, y: puzzleCenter.y - halfWidth, width: outerRadius - innerRadius, height: PuzzleConst.wallWidth)
             let shape = UIBezierPath(roundedRect: rect, cornerRadius: 0)
             shape.apply(transformToRotate(angle: spoke.angle, about: puzzleCenter))
-            PuzzleConst.wallColor.setFill()
-            shape.fill()
-//            wholeView.append(shape)
+            wallPath.append(shape)
         }
     }
     
@@ -95,9 +108,8 @@ class PuzzleView: UIView {
                          startAngle: arc.startAngle + CGFloat.pi,
                          endAngle: arc.startAngle,
                          clockwise: true)
-            PuzzleConst.wallColor.setFill()
-            shape.fill()
-//            wholeView.append(shape)
+            shape.close()  // needed to make "contains" work
+            wallPath.append(shape)
         }
     }
 }
