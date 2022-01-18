@@ -87,8 +87,8 @@ class PuzzleView: UIView {
                          endAngle: arc.endAngle,
                          clockwise: true)
             // end cap
-            let endCenter = CGPoint(x: puzzleCenter.x + radius * cos(arc.endAngle),
-                                    y: puzzleCenter.y + radius * sin(arc.endAngle))
+            let endCenter = CGPoint(x: puzzleCenter.x + radius * cos(CGFloat(arc.endAngle)),
+                                    y: puzzleCenter.y + radius * sin(CGFloat(arc.endAngle)))
             shape.addArc(withCenter: endCenter,
                          radius: halfWidth,
                          startAngle: arc.endAngle,
@@ -101,8 +101,8 @@ class PuzzleView: UIView {
                          endAngle: arc.startAngle,
                          clockwise: false)
             // start cap
-            let startCenter = CGPoint(x: puzzleCenter.x + radius * cos(arc.startAngle),
-                                      y: puzzleCenter.y + radius * sin(arc.startAngle))
+            let startCenter = CGPoint(x: puzzleCenter.x + radius * cos(CGFloat(arc.startAngle)),
+                                      y: puzzleCenter.y + radius * sin(CGFloat(arc.startAngle)))
             shape.addArc(withCenter: startCenter,
                          radius: halfWidth,
                          startAngle: arc.startAngle + CGFloat.pi,

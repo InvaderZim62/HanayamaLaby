@@ -9,7 +9,8 @@ import UIKit
 
 class ViewController: UIViewController {
 
-    let probeView = ProbeView()
+    let backProbeView = ProbeView()
+    let frontProbeView = ProbeView()
 
     @IBOutlet weak var backPuzzleView: PuzzleView!
     @IBOutlet weak var frontPuzzleView: PuzzleView!
@@ -17,7 +18,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.addSubview(backPuzzleView)
-        createProbeView()
+        createProbeViews()
         
         let panGesture = UIPanGestureRecognizer(target: self, action: #selector(screenPanned))
         view.addGestureRecognizer(panGesture)
@@ -35,21 +36,28 @@ class ViewController: UIViewController {
         frontPuzzleView.ringRadiusFactors = frontPuzzle.ringRadiusFactors
         frontPuzzleView.spokes = frontPuzzle.spokes
         frontPuzzleView.arcs = frontPuzzle.arcs
-        probeView.center = backPuzzleView.center
+        backProbeView.center = backPuzzleView.center
+        frontProbeView.center = frontPuzzleView.center
     }
     
-    private func createProbeView() {
-        probeView.frame = CGRect(x: 0, y: 0, width: 2 * ProbeConst.probeRadius, height: 2 * ProbeConst.probeRadius)
-        view.addSubview(probeView)
+    private func createProbeViews() {
+        backProbeView.frame = CGRect(x: 0, y: 0, width: 2 * ProbeConst.probeRadius, height: 2 * ProbeConst.probeRadius)
+        frontProbeView.frame = CGRect(x: 0, y: 0, width: 2 * ProbeConst.probeRadius, height: 2 * ProbeConst.probeRadius)
+        view.addSubview(backProbeView)
+        view.addSubview(frontProbeView)
     }
     
     @objc private func screenPanned(recognizer: UIPanGestureRecognizer) {
         let translation = recognizer.translation(in: view)
-        let positionInViewCoords = (probeView.center + translation).limitedToView(view, withInset: 20)
-        let positionInPuzzleViewCoords = view.convert(positionInViewCoords, to: backPuzzleView)
-        if !backPuzzleView.wallPath.contains(positionInPuzzleViewCoords) {
+        let backProbePositionInViewCoords = (backProbeView.center + translation).limitedToView(view, withInset: 20)
+        let frontProbePositionInViewCoords = (frontProbeView.center + translation).limitedToView(view, withInset: 20)
+        let positionInBackPuzzleViewCoords = view.convert(backProbePositionInViewCoords, to: backPuzzleView)
+        let positionInFrontPuzzleViewCoords = view.convert(frontProbePositionInViewCoords, to: frontPuzzleView)
+        if !backPuzzleView.wallPath.contains(positionInBackPuzzleViewCoords) &&
+            !frontPuzzleView.wallPath.contains(positionInFrontPuzzleViewCoords) {
             // position not inside a wall (allow it to move)
-            probeView.center = positionInViewCoords
+            backProbeView.center = backProbePositionInViewCoords
+            frontProbeView.center = frontProbePositionInViewCoords
         }
         recognizer.setTranslation(.zero, in: view)
     }
@@ -57,43 +65,43 @@ class ViewController: UIViewController {
     let backPuzzle =
     Puzzle(
         spokes: [
-            Spoke(innerRing: 1, outerRing: 2, angle: -1.54),
-            Spoke(innerRing: 0, outerRing: 1, angle: -1.08),
-            Spoke(innerRing: 2, outerRing: 3, angle: -0.82),
-            Spoke(innerRing: 1, outerRing: 3, angle: -0.50),
-            Spoke(innerRing: 0, outerRing: 1, angle:  0.06),
-            Spoke(innerRing: 2, outerRing: 3, angle:  0.19),
-            Spoke(innerRing: 1, outerRing: 2, angle:  0.24),
-            Spoke(innerRing: 0, outerRing: 1, angle:  0.66),
-            Spoke(innerRing: 2, outerRing: 3, angle:  1.21),
-            Spoke(innerRing: 1, outerRing: 2, angle:  1.36),
-            Spoke(innerRing: 1, outerRing: 2, angle:  2.49),
-            Spoke(innerRing: 1, outerRing: 2, angle:  2.62),
-            Spoke(innerRing: 2, outerRing: 3, angle:  2.72),
-            Spoke(innerRing: 0, outerRing: 2, angle: -2.62),
-            Spoke(innerRing: 2, outerRing: 3, angle: -2.23)
+            Spoke(innerRing: 1, outerRing: 2, angle: -1.60),
+            Spoke(innerRing: 0, outerRing: 1, angle: -2.06),
+            Spoke(innerRing: 2, outerRing: 3, angle: -2.32),
+            Spoke(innerRing: 1, outerRing: 3, angle: -2.64),
+            Spoke(innerRing: 0, outerRing: 1, angle:  3.08),
+            Spoke(innerRing: 2, outerRing: 3, angle:  2.95),
+            Spoke(innerRing: 1, outerRing: 2, angle:  2.91),
+            Spoke(innerRing: 0, outerRing: 1, angle:  2.48),
+            Spoke(innerRing: 2, outerRing: 3, angle:  1.93),
+            Spoke(innerRing: 1, outerRing: 2, angle:  1.78),
+            Spoke(innerRing: 1, outerRing: 2, angle:  0.66),
+            Spoke(innerRing: 1, outerRing: 2, angle:  0.52),
+            Spoke(innerRing: 2, outerRing: 3, angle:  0.42),
+            Spoke(innerRing: 0, outerRing: 2, angle: -0.52),
+            Spoke(innerRing: 2, outerRing: 3, angle: -0.91)
         ],
         arcs: [
-            Arc(ring: 3, startAngle: -1.93, endAngle: -0.75),
-            Arc(ring: 3, startAngle: -0.50, endAngle: -0.03),
-            Arc(ring: 3, startAngle:  0.18, endAngle:  0.24),
-            Arc(ring: 3, startAngle:  0.48, endAngle:  2.50),
-            Arc(ring: 3, startAngle:  2.72, endAngle: -2.51),
-            Arc(ring: 3, startAngle: -2.26, endAngle: -2.16),
-            Arc(ring: 2, startAngle: -1.91, endAngle: -0.76),
-            Arc(ring: 2, startAngle: -0.23, endAngle:  0.30),
-            Arc(ring: 2, startAngle:  0.56, endAngle: -3.13),
-            Arc(ring: 2, startAngle: -2.88, endAngle: -2.15),
-            Arc(ring: 1, startAngle: -2.28, endAngle: -1.44),
-            Arc(ring: 1, startAngle: -1.08, endAngle: -0.35),
-            Arc(ring: 1, startAngle:  0.00, endAngle:  0.27),
-            Arc(ring: 1, startAngle:  0.63, endAngle:  0.95),
-            Arc(ring: 1, startAngle:  1.29, endAngle:  1.48),
-            Arc(ring: 1, startAngle:  1.85, endAngle:  2.94),
-            Arc(ring: 1, startAngle: -2.99, endAngle: -2.62),
-            Arc(ring: 0, startAngle: -0.55, endAngle:  0.06),
-            Arc(ring: 0, startAngle:  0.48, endAngle:  0.66),
-            Arc(ring: 0, startAngle:  1.16, endAngle: -1.08)
+            Arc(ring: 3, startAngle: -2.39, endAngle: -1.21),
+            Arc(ring: 3, startAngle: -3.11, endAngle: -2.64),
+            Arc(ring: 3, startAngle:  2.90, endAngle:  2.96),
+            Arc(ring: 3, startAngle:  0.64, endAngle:  2.66),
+            Arc(ring: 3, startAngle: -0.63, endAngle:  0.42),
+            Arc(ring: 3, startAngle: -0.98, endAngle: -0.88),
+            Arc(ring: 2, startAngle: -2.38, endAngle: -1.23),
+            Arc(ring: 2, startAngle:  2.84, endAngle: -2.91),
+            Arc(ring: 2, startAngle: -0.01, endAngle:  2.58),
+            Arc(ring: 2, startAngle: -0.99, endAngle: -0.26),
+            Arc(ring: 1, startAngle: -1.71, endAngle: -0.87),
+            Arc(ring: 1, startAngle: -2.80, endAngle: -2.06),
+            Arc(ring: 1, startAngle:  2.87, endAngle: -3.14),
+            Arc(ring: 1, startAngle:  2.19, endAngle:  2.51),
+            Arc(ring: 1, startAngle:  1.66, endAngle:  1.85),
+            Arc(ring: 1, startAngle:  0.20, endAngle:  1.29),
+            Arc(ring: 1, startAngle: -0.52, endAngle: -0.16),
+            Arc(ring: 0, startAngle:  3.08, endAngle: -2.60),
+            Arc(ring: 0, startAngle:  2.48, endAngle:  2.66),
+            Arc(ring: 0, startAngle: -2.06, endAngle:  1.98)
         ]
     )
 
