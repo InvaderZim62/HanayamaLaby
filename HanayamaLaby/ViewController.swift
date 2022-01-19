@@ -4,13 +4,19 @@
 //
 //  Created by Phil Stern on 1/15/22.
 //
+//  To do...
+//  - rename probe to peg?
+//
 
 import UIKit
 
 struct Constants {
     static let probeRadius: CGFloat = 2.5
     static let handleWidth: CGFloat = 5 * probeRadius
-    static let handleLength: CGFloat = 60
+    static let faceLength: CGFloat = 60
+    static let tailLength: CGFloat = 30
+    static let handleLength: CGFloat = 190
+    static let tailOffset: CGFloat = 0.15  // percent of handle length from bottom
     static let panRotationSensitivity: CGFloat = 4  // ie. rotate handle views 4 times faster than rotation gesture
     static let probeColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
     static let handleColor = #colorLiteral(red: 0.7254902124, green: 0.4784313738, blue: 0.09803921729, alpha: 1)
@@ -53,8 +59,9 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         frontPuzzleView.spokes = frontPuzzle.spokes
         frontPuzzleView.arcs = frontPuzzle.arcs
         
-        backHandleView.center = backPuzzleView.center
-        frontHandleView.center = frontPuzzleView.center
+        let centerOffset = CGPoint(x: 0, y: (Constants.handleLength - Constants.faceLength) / 2)
+        backHandleView.center = backPuzzleView.center + centerOffset
+        frontHandleView.center = frontPuzzleView.center + centerOffset
     }
     
     private func createHandleViews() {
@@ -75,13 +82,18 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         let pastBackHandleViewCenter = backHandleView.center
         backHandleView.center = (backHandleView.center + translation).limitedToView(view, withInset: 20)  // in view coordinates
         let backProbePositionInPuzzleCoords = view.convert(backHandleView.probePositionInSuperview, to: backPuzzleView)
+        let backTailPositionInPuzzleCoords = view.convert(backHandleView.tailPositionInSuperview, to: backPuzzleView)
 
         let pastFrontHandleViewCenter = frontHandleView.center
         frontHandleView.center = (frontHandleView.center + translation).limitedToView(view, withInset: 20)  // in view coordinates
         let frontProbePositionInPuzzleCoords = view.convert(frontHandleView.probePositionInSuperview, to: frontPuzzleView)
-        
+        let frontTailPositionInPuzzleCoords = view.convert(frontHandleView.tailPositionInSuperview, to: frontPuzzleView)
+
         if backPuzzleView.wallPath.contains(backProbePositionInPuzzleCoords) ||
-            frontPuzzleView.wallPath.contains(frontProbePositionInPuzzleCoords) {
+            backPuzzleView.wallPath.contains(backTailPositionInPuzzleCoords) ||
+            frontPuzzleView.wallPath.contains(frontProbePositionInPuzzleCoords) ||
+            frontPuzzleView.wallPath.contains(frontTailPositionInPuzzleCoords)
+        {
             // handle probe inside a wall (reset its position)
             backHandleView.center = pastBackHandleViewCenter
             frontHandleView.center = pastFrontHandleViewCenter
@@ -102,19 +114,29 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         }
         recognizer.setTranslation(.zero, in: view)
     }
-
+    
+    private func transformToRotate(angle: Double, about point: CGPoint) -> CGAffineTransform {
+        // rotate about point by translating (from 0,0) to point, rotating, and translating back
+        return CGAffineTransform(translationX: point.x, y: point.y).rotated(by: CGFloat(angle)).translatedBy(x: -point.x, y: -point.y)
+    }
+    
     @objc private func handleRotate(recognizer: UIRotationGestureRecognizer) {
         // try moving first, then determine if it when through wall (reset, if it did)
         let pastBackHandleViewTransform = backHandleView.transform
         backHandleView.transform = backHandleView.transform.rotated(by: Constants.panRotationSensitivity * recognizer.rotation)
         let backProbePositionInPuzzleCoords = view.convert(backHandleView.probePositionInSuperview, to: backPuzzleView)
+        let backTailPositionInPuzzleCoords = view.convert(backHandleView.tailPositionInSuperview, to: backPuzzleView)
 
         let pastFrontHandleViewTransform = frontHandleView.transform
         frontHandleView.transform = frontHandleView.transform.rotated(by: Constants.panRotationSensitivity * recognizer.rotation)
         let frontProbePositionInPuzzleCoords = view.convert(frontHandleView.probePositionInSuperview, to: frontPuzzleView)
-        
+        let frontTailPositionInPuzzleCoords = view.convert(frontHandleView.tailPositionInSuperview, to: frontPuzzleView)
+
         if backPuzzleView.wallPath.contains(backProbePositionInPuzzleCoords) ||
-            frontPuzzleView.wallPath.contains(frontProbePositionInPuzzleCoords) {
+            backPuzzleView.wallPath.contains(backTailPositionInPuzzleCoords) ||
+            frontPuzzleView.wallPath.contains(frontProbePositionInPuzzleCoords) ||
+            frontPuzzleView.wallPath.contains(frontTailPositionInPuzzleCoords)
+        {
             // handle probe inside a wall (reset its transform)
             backHandleView.transform = pastBackHandleViewTransform
             frontHandleView.transform = pastFrontHandleViewTransform
@@ -124,7 +146,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
 
     // MARK: - UIGestureRecognizerDelegate
     
-    // allow two simultaneous pan gesture recognizers (mine and the camera's)
+    // allow simultaneous pan and rotate gestures
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }
