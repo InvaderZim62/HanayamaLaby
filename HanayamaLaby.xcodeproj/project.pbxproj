@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4A8D863A2796052600DEB693 /* ProbeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A8D86392796052600DEB693 /* ProbeView.swift */; };
 		4A8D863C2796096300DEB693 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A8D863B2796096300DEB693 /* Extensions.swift */; };
+		4A8D863E27966B1700DEB693 /* HandleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A8D863D27966B1700DEB693 /* HandleView.swift */; };
 		4AA6CC4E27937D2700E10CED /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AA6CC4D27937D2700E10CED /* AppDelegate.swift */; };
 		4AA6CC5027937D2700E10CED /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AA6CC4F27937D2700E10CED /* SceneDelegate.swift */; };
 		4AA6CC5227937D2700E10CED /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AA6CC5127937D2700E10CED /* ViewController.swift */; };
@@ -20,8 +20,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		4A8D86392796052600DEB693 /* ProbeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProbeView.swift; sourceTree = "<group>"; };
 		4A8D863B2796096300DEB693 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		4A8D863D27966B1700DEB693 /* HandleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandleView.swift; sourceTree = "<group>"; };
 		4AA6CC4A27937D2700E10CED /* HanayamaLaby.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HanayamaLaby.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4AA6CC4D27937D2700E10CED /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4AA6CC4F27937D2700E10CED /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -90,7 +90,7 @@
 			isa = PBXGroup;
 			children = (
 				4AA6CC622793D9A200E10CED /* PuzzleView.swift */,
-				4A8D86392796052600DEB693 /* ProbeView.swift */,
+				4A8D863D27966B1700DEB693 /* HandleView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -175,7 +175,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4AA6CC662793D9BE00E10CED /* Puzzle.swift in Sources */,
-				4A8D863A2796052600DEB693 /* ProbeView.swift in Sources */,
+				4A8D863E27966B1700DEB693 /* HandleView.swift in Sources */,
 				4AA6CC632793D9A200E10CED /* PuzzleView.swift in Sources */,
 				4AA6CC5227937D2700E10CED /* ViewController.swift in Sources */,
 				4AA6CC4E27937D2700E10CED /* AppDelegate.swift in Sources */,

@@ -7,10 +7,18 @@
 
 import UIKit
 
+struct Constants {
+    static let probeRadius: CGFloat = 2.5
+    static let handleWidth: CGFloat = 5 * probeRadius
+    static let handleHeight: CGFloat = 50
+    static let probeColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
+    static let handleColor = #colorLiteral(red: 0.7254902124, green: 0.4784313738, blue: 0.09803921729, alpha: 1)
+}
+
 class ViewController: UIViewController {
 
-    let backProbeView = ProbeView()
-    let frontProbeView = ProbeView()
+    let backHandleView = HandleView()
+    let frontHandleView = HandleView()
 
     @IBOutlet weak var backPuzzleView: PuzzleView!
     @IBOutlet weak var frontPuzzleView: PuzzleView!
@@ -18,7 +26,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.addSubview(backPuzzleView)
-        createProbeViews()
+        createHandleViews()
         
         let panGesture = UIPanGestureRecognizer(target: self, action: #selector(screenPanned))
         view.addGestureRecognizer(panGesture)
@@ -33,31 +41,41 @@ class ViewController: UIViewController {
         backPuzzleView.ringRadiusFactors = backPuzzle.ringRadiusFactors
         backPuzzleView.spokes = backPuzzle.spokes
         backPuzzleView.arcs = backPuzzle.arcs
+        
         frontPuzzleView.ringRadiusFactors = frontPuzzle.ringRadiusFactors
         frontPuzzleView.spokes = frontPuzzle.spokes
         frontPuzzleView.arcs = frontPuzzle.arcs
-        backProbeView.center = backPuzzleView.center
-        frontProbeView.center = frontPuzzleView.center
+        
+        backHandleView.center = backPuzzleView.center
+        frontHandleView.center = frontPuzzleView.center
     }
     
-    private func createProbeViews() {
-        backProbeView.frame = CGRect(x: 0, y: 0, width: 2 * ProbeConst.probeRadius, height: 2 * ProbeConst.probeRadius)
-        frontProbeView.frame = CGRect(x: 0, y: 0, width: 2 * ProbeConst.probeRadius, height: 2 * ProbeConst.probeRadius)
-        view.addSubview(backProbeView)
-        view.addSubview(frontProbeView)
+    private func createHandleViews() {
+        backHandleView.frame = CGRect(x: 0, y: 0, width: Constants.handleWidth, height: Constants.handleHeight)
+        backHandleView.probeOffset = 0.85
+        view.addSubview(backHandleView)
+
+        frontHandleView.frame = CGRect(x: 0, y: 0, width: Constants.handleWidth, height: Constants.handleHeight)
+        frontHandleView.probeOffset = 0.15
+        view.addSubview(frontHandleView)
     }
     
     @objc private func screenPanned(recognizer: UIPanGestureRecognizer) {
         let translation = recognizer.translation(in: view)
-        let backProbePositionInViewCoords = (backProbeView.center + translation).limitedToView(view, withInset: 20)
-        let frontProbePositionInViewCoords = (frontProbeView.center + translation).limitedToView(view, withInset: 20)
-        let positionInBackPuzzleViewCoords = view.convert(backProbePositionInViewCoords, to: backPuzzleView)
-        let positionInFrontPuzzleViewCoords = view.convert(frontProbePositionInViewCoords, to: frontPuzzleView)
-        if !backPuzzleView.wallPath.contains(positionInBackPuzzleViewCoords) &&
-            !frontPuzzleView.wallPath.contains(positionInFrontPuzzleViewCoords) {
-            // position not inside a wall (allow it to move)
-            backProbeView.center = backProbePositionInViewCoords
-            frontProbeView.center = frontProbePositionInViewCoords
+        // try moving first, then determine if it should not have
+        let pastBackHandleViewCenter = backHandleView.center
+        backHandleView.center = (backHandleView.center + translation).limitedToView(view, withInset: 20)  // in view coordinates
+        let backProbePositionInPuzzleCoords = view.convert(backHandleView.probePositionInSuperview, to: backPuzzleView)
+
+        let pastFrontHandleViewCenter = frontHandleView.center
+        frontHandleView.center = (frontHandleView.center + translation).limitedToView(view, withInset: 20)  // in view coordinates
+        let frontProbePositionInPuzzleCoords = view.convert(frontHandleView.probePositionInSuperview, to: frontPuzzleView)
+        
+        if backPuzzleView.wallPath.contains(backProbePositionInPuzzleCoords) ||
+            frontPuzzleView.wallPath.contains(frontProbePositionInPuzzleCoords) {
+            // handle probe inside a wall (reset its position)
+            backHandleView.center = pastBackHandleViewCenter
+            frontHandleView.center = pastFrontHandleViewCenter
         }
         recognizer.setTranslation(.zero, in: view)
     }
