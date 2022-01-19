@@ -9,7 +9,6 @@ import UIKit
 
 class HandleView: UIView {
     
-    var angle: CGFloat = 0
     var probeOffset: CGFloat = 0  // percent offset from top
     
     private lazy var probeCenter = CGPoint(x: bounds.midX, y: probeOffset * bounds.height)  // position in HandleView coordinates
