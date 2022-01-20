@@ -16,11 +16,21 @@ struct Constants {
     static let handleWidth: CGFloat = 5 * probeRadius
     static let faceLength: CGFloat = 60
     static let tailLength: CGFloat = 30
-    static let handleLength: CGFloat = 190
+    static let handleLength: CGFloat = 200
     static let tailOffset: CGFloat = 0.15  // percent of handle length from bottom
     static let panRotationSensitivity: CGFloat = 4  // ie. rotate handle views 4 times faster than rotation gesture
     static let probeColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
     static let handleColor = #colorLiteral(red: 0.7254902124, green: 0.4784313738, blue: 0.09803921729, alpha: 1)
+}
+
+enum Display: CaseIterable {
+    case image
+    case drawing
+    case both
+    mutating func next() {
+        let allCases = type(of: self).allCases
+        self = allCases[(allCases.firstIndex(of: self)! + 1) % allCases.count]
+    }
 }
 
 class ViewController: UIViewController, UIGestureRecognizerDelegate {
@@ -30,6 +40,30 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
     let backHandleView = HandleView()
     let frontHandleView = HandleView()
 
+    var display = Display.image {
+        didSet {
+            switch display {
+            case .image:
+                backImage.isHidden = false
+                frontImage.isHidden = false
+                backPuzzleView.alpha = 0
+                frontPuzzleView.alpha = 0
+            case .drawing:
+                backImage.isHidden = true
+                frontImage.isHidden = true
+                backPuzzleView.alpha = 1
+                frontPuzzleView.alpha = 1
+            case .both:
+                backImage.isHidden = false
+                frontImage.isHidden = false
+                backPuzzleView.alpha = 0.4
+                frontPuzzleView.alpha = 0.4
+            }
+        }
+    }
+
+    @IBOutlet weak var backImage: UIImageView!
+    @IBOutlet weak var frontImage: UIImageView!
     @IBOutlet weak var backPuzzleView: PuzzleView!
     @IBOutlet weak var frontPuzzleView: PuzzleView!
     
@@ -145,6 +179,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         recognizer.rotation = 0  // reset, to use incremental rotations
     }
 
+    @IBAction func togglePressed(_ sender: UIButton) {
+        display.next()
+    }
+    
     // MARK: - UIGestureRecognizerDelegate
     
     // allow simultaneous pan and rotate gestures

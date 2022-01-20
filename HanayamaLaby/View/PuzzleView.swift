@@ -9,8 +9,8 @@ import UIKit
 
 struct PuzzleConst {
     static let wallWidth: CGFloat = 10
-    static let wallColor = #colorLiteral(red: 0.8078431487, green: 0.02745098062, blue: 0.3333333433, alpha: 1)
-    static let floorColor = #colorLiteral(red: 0.3647058904, green: 0.06666667014, blue: 0.9686274529, alpha: 1)
+    static let wallColor = #colorLiteral(red: 0.501960814, green: 0.501960814, blue: 0.501960814, alpha: 1)
+    static let floorColor = #colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1)
 }
 
 class PuzzleView: UIView {

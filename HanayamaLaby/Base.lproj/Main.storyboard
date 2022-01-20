@@ -38,6 +38,15 @@
                                 <rect key="frame" x="458" y="77" width="260" height="260"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qex-pK-fGm">
+                                <rect key="frame" x="787" y="355" width="101" height="30"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                <state key="normal" title="Toggle Display"/>
+                                <connections>
+                                    <action selector="togglePressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="b8a-gS-PYx"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -45,19 +54,24 @@
                             <constraint firstItem="uMc-te-h9a" firstAttribute="top" secondItem="W9v-9m-YHv" secondAttribute="top" id="2lv-Kb-OZp"/>
                             <constraint firstItem="uMc-te-h9a" firstAttribute="leading" secondItem="W9v-9m-YHv" secondAttribute="leading" id="4Aw-DE-tzg"/>
                             <constraint firstItem="vcA-HR-kYE" firstAttribute="bottom" secondItem="8ed-Bh-aOY" secondAttribute="bottom" id="9bp-VU-9fJ"/>
+                            <constraint firstAttribute="trailing" secondItem="qex-pK-fGm" secondAttribute="trailing" constant="8" id="B42-ab-Zeg"/>
                             <constraint firstItem="uMc-te-h9a" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="FaR-Dl-mBq"/>
                             <constraint firstItem="W9v-9m-YHv" firstAttribute="bottom" secondItem="uMc-te-h9a" secondAttribute="bottom" id="MMe-Ev-Dla"/>
                             <constraint firstItem="W9v-9m-YHv" firstAttribute="trailing" secondItem="uMc-te-h9a" secondAttribute="trailing" id="VFM-aT-WVh"/>
                             <constraint firstItem="8ed-Bh-aOY" firstAttribute="leading" secondItem="vcA-HR-kYE" secondAttribute="leading" id="ZzE-yQ-PgH"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="qex-pK-fGm" secondAttribute="bottom" constant="8" id="aru-Mg-Men"/>
                             <constraint firstItem="uMc-te-h9a" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" constant="140" id="auL-jK-aIj"/>
                             <constraint firstItem="8ed-Bh-aOY" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" constant="-140" id="cj9-wP-ut1"/>
                             <constraint firstItem="8ed-Bh-aOY" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="eeO-2M-gRp"/>
+                            <constraint firstItem="qex-pK-fGm" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="6Tk-OE-BBY" secondAttribute="leading" symbolic="YES" id="kup-zA-6jU"/>
                             <constraint firstItem="8ed-Bh-aOY" firstAttribute="top" secondItem="vcA-HR-kYE" secondAttribute="top" id="kzh-jp-koo"/>
                             <constraint firstItem="vcA-HR-kYE" firstAttribute="trailing" secondItem="8ed-Bh-aOY" secondAttribute="trailing" id="xUg-70-Pa9"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="backImage" destination="vcA-HR-kYE" id="6DH-20-Wdd"/>
                         <outlet property="backPuzzleView" destination="8ed-Bh-aOY" id="4vK-Sg-K2p"/>
+                        <outlet property="frontImage" destination="W9v-9m-YHv" id="2w1-BB-e2c"/>
                         <outlet property="frontPuzzleView" destination="uMc-te-h9a" id="DXl-e5-PD2"/>
                     </connections>
                 </viewController>
