@@ -6,6 +6,7 @@
 //
 //  To do...
 //  - rename probe to peg?
+//  - move rotation point from center to contact point, if contact made with either handle (might make panning/rotating easier)
 //
 
 import UIKit
@@ -77,7 +78,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
     // MARK: - Gesture actions
     
     @objc private func handlePan(recognizer: UIPanGestureRecognizer) {
-        let translation = recognizer.translation(in: view)
+        let translation = recognizer.translation(in: view).limitedTo(PuzzleConst.wallWidth / 2)
         // try moving first, then determine if it when through wall (reset, if it did)
         let pastBackHandleViewCenter = backHandleView.center
         backHandleView.center = (backHandleView.center + translation).limitedToView(view, withInset: 20)  // in view coordinates

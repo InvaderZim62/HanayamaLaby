@@ -27,4 +27,10 @@ extension CGPoint {
         let limitedY = min(view.bounds.maxY - withInset, max(view.bounds.minY + withInset, y))
         return CGPoint(x: limitedX, y: limitedY)
     }
+    
+    func limitedTo(_ value: CGFloat) -> CGPoint {
+        let limitedX = min(value, max(-value, x))
+        let limitedY = min(value, max(-value, y))
+        return CGPoint(x: limitedX, y: limitedY)
+    }
 }
