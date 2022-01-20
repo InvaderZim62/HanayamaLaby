@@ -9,13 +9,13 @@ import UIKit
 
 class HandleView: UIView {
     
-    var probeOffset: CGFloat = 0  // percent face length offset from top
+    var pegOffset: CGFloat = 0  // percent face length offset from top
     
-    private lazy var probeCenter = CGPoint(x: bounds.midX, y: probeOffset * Constants.faceLength)  // position in HandleView coordinates
+    private lazy var pegCenter = CGPoint(x: bounds.midX, y: pegOffset * Constants.faceLength)  // position in HandleView coordinates
     private lazy var tailCenter = CGPoint(x: bounds.midX, y: Constants.handleLength - Constants.tailLength)
 
-    var probePositionInSuperview: CGPoint {
-        convert(probeCenter, to: superview)
+    var pegPositionInSuperview: CGPoint {
+        convert(pegCenter, to: superview)
     }
     
     var tailPositionInSuperview: CGPoint {
@@ -28,7 +28,7 @@ class HandleView: UIView {
     }
 
     required init?(coder: NSCoder) {  // called for views created in storyboard
-        self.probeOffset = 0
+        self.pegOffset = 0
         super.init(coder: coder)
     }
 
@@ -46,19 +46,19 @@ class HandleView: UIView {
         Constants.handleColor.setFill()
         face.fill()
         
-        let probe = UIBezierPath(arcCenter: probeCenter,
-                                  radius: Constants.probeRadius,
-                                  startAngle: 0,
-                                  endAngle: 2 * CGFloat.pi,
-                                  clockwise: true)
-        Constants.probeColor.setFill()
-        probe.fill()
+        let peg = UIBezierPath(arcCenter: pegCenter,
+                               radius: Constants.pegRadius,
+                               startAngle: 0,
+                               endAngle: 2 * CGFloat.pi,
+                               clockwise: true)
+        Constants.pegColor.setFill()
+        peg.fill()
         
         let tail = UIBezierPath(roundedRect: CGRect(x: 0,
                                                     y: Constants.handleLength - Constants.tailLength,
                                                     width: bounds.width,
                                                     height: Constants.tailLength), cornerRadius: 4)
-        Constants.probeColor.setFill()
+        Constants.pegColor.setFill()
         tail.fill()
     }
 }

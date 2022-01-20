@@ -5,21 +5,22 @@
 //  Created by Phil Stern on 1/15/22.
 //
 //  To do...
-//  - rename probe to peg?
 //  - move rotation point from center to contact point, if contact made with either handle (might make panning/rotating easier)
+//  - backHandleView.center doesn't change during panning; it stays at the value set in updateViewFromModel; maybe because of
+//    using transforms?  Because of this, limiting its center to an inset of self.view doesn't work.
 //
 
 import UIKit
 
 struct Constants {
-    static let probeRadius: CGFloat = 2.5
-    static let handleWidth: CGFloat = 5 * probeRadius
+    static let pegRadius: CGFloat = 2.5
+    static let handleWidth: CGFloat = 5 * pegRadius
     static let faceLength: CGFloat = 60
     static let tailLength: CGFloat = 30
     static let handleLength: CGFloat = 200
     static let tailOffset: CGFloat = 0.15  // percent of handle length from bottom
     static let panRotationSensitivity: CGFloat = 4  // ie. rotate handle views 4 times faster than rotation gesture
-    static let probeColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
+    static let pegColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
     static let handleColor = #colorLiteral(red: 0.7254902124, green: 0.4784313738, blue: 0.09803921729, alpha: 1)
 }
 
@@ -101,11 +102,11 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
     
     private func createHandleViews() {
         backHandleView.frame = CGRect(x: 0, y: 0, width: Constants.handleWidth, height: Constants.handleLength)
-        backHandleView.probeOffset = 0.15
+        backHandleView.pegOffset = 0.15
         view.addSubview(backHandleView)
 
         frontHandleView.frame = CGRect(x: 0, y: 0, width: Constants.handleWidth, height: Constants.handleLength)
-        frontHandleView.probeOffset = 0.85
+        frontHandleView.pegOffset = 0.85
         view.addSubview(frontHandleView)
     }
     
@@ -116,24 +117,24 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         // try moving first, then determine if it when through wall (reset, if it did)
         let pastBackHandleViewCenter = backHandleView.center
         backHandleView.center = (backHandleView.center + translation).limitedToView(view, withInset: 20)  // in view coordinates
-        let backProbePositionInPuzzleCoords = view.convert(backHandleView.probePositionInSuperview, to: backPuzzleView)
+        let backPegPositionInPuzzleCoords = view.convert(backHandleView.pegPositionInSuperview, to: backPuzzleView)
         let backTailPositionInPuzzleCoords = view.convert(backHandleView.tailPositionInSuperview, to: backPuzzleView)
 
         let pastFrontHandleViewCenter = frontHandleView.center
         frontHandleView.center = (frontHandleView.center + translation).limitedToView(view, withInset: 20)  // in view coordinates
-        let frontProbePositionInPuzzleCoords = view.convert(frontHandleView.probePositionInSuperview, to: frontPuzzleView)
+        let frontPegPositionInPuzzleCoords = view.convert(frontHandleView.pegPositionInSuperview, to: frontPuzzleView)
         let frontTailPositionInPuzzleCoords = view.convert(frontHandleView.tailPositionInSuperview, to: frontPuzzleView)
 
-        if backPuzzleView.wallPath.contains(backProbePositionInPuzzleCoords) ||
-            backPuzzleView.wallPath.contains(backTailPositionInPuzzleCoords) ||
-            frontPuzzleView.wallPath.contains(frontProbePositionInPuzzleCoords) ||
-            frontPuzzleView.wallPath.contains(frontTailPositionInPuzzleCoords)
+        if backPuzzleView.wallPath.contains(backPegPositionInPuzzleCoords) ||
+            backPuzzleView.floorPath.contains(backTailPositionInPuzzleCoords) ||
+            frontPuzzleView.wallPath.contains(frontPegPositionInPuzzleCoords) ||
+            frontPuzzleView.floorPath.contains(frontTailPositionInPuzzleCoords)
         {
-            // handle probe inside a wall (reset its position)
+            // handle peg inside a wall or tail inside floor (reset its position)
             backHandleView.center = pastBackHandleViewCenter
             frontHandleView.center = pastFrontHandleViewCenter
         } else {
-            // handle probe is in alleyway (good)
+            // handle peg is in alleyway and tail is outside floor (good)
             // since the gestures are added to self.view, rather than the handle views, the handle view transforms need to be
             // updated with this translation; otherwise, the handle views jump back to their past position when the rotation
             // sets the rotational part of their transforms; also note, the pan direction needs to be converted from screen
@@ -159,20 +160,20 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         // try moving first, then determine if it when through wall (reset, if it did)
         let pastBackHandleViewTransform = backHandleView.transform
         backHandleView.transform = backHandleView.transform.rotated(by: Constants.panRotationSensitivity * recognizer.rotation)
-        let backProbePositionInPuzzleCoords = view.convert(backHandleView.probePositionInSuperview, to: backPuzzleView)
+        let backPegPositionInPuzzleCoords = view.convert(backHandleView.pegPositionInSuperview, to: backPuzzleView)
         let backTailPositionInPuzzleCoords = view.convert(backHandleView.tailPositionInSuperview, to: backPuzzleView)
 
         let pastFrontHandleViewTransform = frontHandleView.transform
         frontHandleView.transform = frontHandleView.transform.rotated(by: Constants.panRotationSensitivity * recognizer.rotation)
-        let frontProbePositionInPuzzleCoords = view.convert(frontHandleView.probePositionInSuperview, to: frontPuzzleView)
+        let frontPegPositionInPuzzleCoords = view.convert(frontHandleView.pegPositionInSuperview, to: frontPuzzleView)
         let frontTailPositionInPuzzleCoords = view.convert(frontHandleView.tailPositionInSuperview, to: frontPuzzleView)
 
-        if backPuzzleView.wallPath.contains(backProbePositionInPuzzleCoords) ||
-            backPuzzleView.wallPath.contains(backTailPositionInPuzzleCoords) ||
-            frontPuzzleView.wallPath.contains(frontProbePositionInPuzzleCoords) ||
-            frontPuzzleView.wallPath.contains(frontTailPositionInPuzzleCoords)
+        if backPuzzleView.wallPath.contains(backPegPositionInPuzzleCoords) ||
+            backPuzzleView.floorPath.contains(backTailPositionInPuzzleCoords) ||
+            frontPuzzleView.wallPath.contains(frontPegPositionInPuzzleCoords) ||
+            frontPuzzleView.floorPath.contains(frontTailPositionInPuzzleCoords)
         {
-            // handle probe inside a wall (reset its transform)
+            // handle peg inside a wall or tail inside floor (reset its transform)
             backHandleView.transform = pastBackHandleViewTransform
             frontHandleView.transform = pastFrontHandleViewTransform
         }

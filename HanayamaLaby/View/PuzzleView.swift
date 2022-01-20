@@ -20,6 +20,7 @@ class PuzzleView: UIView {
     var arcs = [Arc]()
     
     private(set) var wallPath = UIBezierPath()
+    private(set) var floorPath = UIBezierPath()
     private lazy var puzzleCenter = CGPoint(x: bounds.midX, y: bounds.midY)
     
     // rotate about point by translating (from 0,0) to point, rotating, and translating back
@@ -46,6 +47,7 @@ class PuzzleView: UIView {
                                   clockwise: true)
         PuzzleConst.floorColor.setFill()
         circle.fill()
+        floorPath = circle
         // remove center hole
         if let radiusFactor = ringRadiusFactors.first {  // since called before ringRadiusFactors is set
             let radius = 0.96 * (radiusFactor * bounds.width / 2 - PuzzleConst.wallWidth / 2)
