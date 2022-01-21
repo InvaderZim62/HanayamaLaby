@@ -34,3 +34,9 @@ extension CGPoint {
         return CGPoint(x: limitedX, y: limitedY)
     }
 }
+
+extension CGFloat {
+    func limitedTo(_ limit: CGFloat) -> CGFloat {
+        CGFloat.minimum(limit, CGFloat.maximum(-limit, self))
+    }
+}
