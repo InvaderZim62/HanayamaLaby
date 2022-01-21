@@ -4,10 +4,20 @@
 //
 //  Created by Phil Stern on 1/15/22.
 //
+//  This app makes extensive use of transforms
+//  - transforms change a view's frame, but not its "center" property
+//  - changing transforms cause viewDidLayoutSubviews to be called
+//
+//  Lessons learned...
+//  - using transforms to rotate the handle views (which this app does), rather then redrawing at different angles,
+//    results in needing to use transforms for the translations (setting initial positions, and panning) as well
+//  - trying to move the handle view's center while panning (rather than transforming) results in the handle view
+//    jumping back to it's initial position when changing the rotational part of the transform (in handleRotate)
+//  - setting the handle view's initial position by setting its center (ex. in updateViewFromModel) results in
+//    incorrect conversion of the center (used in handlePan to prevent panning off-screen)
+//
 //  To do...
 //  - move rotation point from center to contact point, if contact made with either handle (might make panning/rotating easier)
-//  - backHandleView.center doesn't change during panning; it stays at the value set in updateViewFromModel; maybe because of
-//    using transforms?  Because of this, limiting its center to an inset of self.view doesn't work.
 //
 
 import UIKit
@@ -79,9 +89,13 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         let rotate = UIRotationGestureRecognizer(target: self, action: #selector(handleRotate))
         rotate.delegate = self
         view.addGestureRecognizer(rotate)
+
+        // debug - start with handles outside puzzles (may also want to set "Back Puzzle View" horizontal center to +140 in storyboard)
+//        backHandleView.transform = backHandleView.transform.translatedBy(x: 30, y: 30)
+//        frontHandleView.transform = frontHandleView.transform.translatedBy(x: 60, y: 30)
     }
     
-    override func viewDidLayoutSubviews() {
+    override func viewDidLayoutSubviews() {  // called when handleView's transform changes (frequently)
         super.viewDidLayoutSubviews()
         updateViewFromModel()
     }
@@ -94,10 +108,14 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         frontPuzzleView.ringRadiusFactors = frontPuzzle.ringRadiusFactors
         frontPuzzleView.spokes = frontPuzzle.spokes
         frontPuzzleView.arcs = frontPuzzle.arcs
-        
-        let centerOffset = CGPoint(x: 0, y: (Constants.handleLength - Constants.faceLength) / 2)
-        backHandleView.center = backPuzzleView.center + centerOffset
-        frontHandleView.center = frontPuzzleView.center + centerOffset
+
+        if backHandleView.transform == .identity {
+            let midFacePoint = CGPoint(x: Constants.handleWidth / 2, y: Constants.faceLength / 2)
+            let backTranslate = backPuzzleView.center - midFacePoint
+            let frontTranslate = frontPuzzleView.center - midFacePoint
+            backHandleView.transform = backHandleView.transform.translatedBy(x: backTranslate.x, y: backTranslate.y)
+            frontHandleView.transform = frontHandleView.transform.translatedBy(x: frontTranslate.x, y: frontTranslate.y)
+        }
     }
     
     private func createHandleViews() {
@@ -114,39 +132,39 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
     
     @objc private func handlePan(recognizer: UIPanGestureRecognizer) {
         let translation = recognizer.translation(in: view).limitedTo(PuzzleConst.wallWidth / 2)  // limit to prevent moving through walls in one step
+        
+        // don't allow panning off screen (with 10-point buffer)
+        let backHandleViewCenter = backHandleView.convert(backHandleView.center, to: view)  // convert, since .center doesn't change with transform.translatedBy
+        let backTargetPosition = backHandleViewCenter + translation
+        let frontHandleViewCenter = frontHandleView.convert(frontHandleView.center, to: view)
+        let frontTargetPosition = frontHandleViewCenter + translation
+        if !view.frame.insetBy(dx: 10, dy: 10).contains(backTargetPosition) || !view.frame.insetBy(dx: 10, dy: 10).contains(frontTargetPosition) {
+            return
+        }
+
         // try moving first, then determine if it went through wall (reset, if it did)
-        let pastBackHandleViewCenter = backHandleView.center
-        backHandleView.center = (backHandleView.center + translation).limitedToView(view, withInset: 20)  // in view coordinates
+        let backHandleTransformPast = backHandleView.transform
+        let backAngle = atan2(backHandleView.transform.b, backHandleView.transform.a)
+        backHandleView.transform = backHandleView.transform.translatedBy(x: translation.x * cos(backAngle) + translation.y * sin(backAngle),
+                                                                         y: -translation.x * sin(backAngle) + translation.y * cos(backAngle))
         let backPegPositionInPuzzleCoords = view.convert(backHandleView.pegPositionInSuperview, to: backPuzzleView)
         let backTailPositionInPuzzleCoords = view.convert(backHandleView.tailPositionInSuperview, to: backPuzzleView)
 
-        let pastFrontHandleViewCenter = frontHandleView.center
-        frontHandleView.center = (frontHandleView.center + translation).limitedToView(view, withInset: 20)  // in view coordinates
+        let frontHandleTransformPast = frontHandleView.transform
+        let frontAngle = atan2(frontHandleView.transform.b, frontHandleView.transform.a)
+        frontHandleView.transform = frontHandleView.transform.translatedBy(x: translation.x * cos(frontAngle) + translation.y * sin(frontAngle),
+                                                                         y: -translation.x * sin(frontAngle) + translation.y * cos(frontAngle))
         let frontPegPositionInPuzzleCoords = view.convert(frontHandleView.pegPositionInSuperview, to: frontPuzzleView)
         let frontTailPositionInPuzzleCoords = view.convert(frontHandleView.tailPositionInSuperview, to: frontPuzzleView)
-
+        
         if backPuzzleView.wallPath.contains(backPegPositionInPuzzleCoords) ||
             backPuzzleView.floorPath.contains(backTailPositionInPuzzleCoords) ||
             frontPuzzleView.wallPath.contains(frontPegPositionInPuzzleCoords) ||
             frontPuzzleView.floorPath.contains(frontTailPositionInPuzzleCoords)
         {
-            // handle peg inside a wall or tail inside floor (reset its position)
-            backHandleView.center = pastBackHandleViewCenter
-            frontHandleView.center = pastFrontHandleViewCenter
-        } else {
-            // handle peg is in alleyway and tail is outside floor (good)
-            // since the gestures are added to self.view, rather than the handle views, the handle view transforms need to be
-            // updated with this translation; otherwise, the handle views jump back to their past position when the rotation
-            // sets the rotational part of their transforms; also note, the pan direction needs to be converted from screen
-            // coordinates to rotated handle view coordinates
-            let backDeltaPosition = backHandleView.center - pastBackHandleViewCenter
-            let backAngle = atan2(backHandleView.transform.b, backHandleView.transform.a)
-            backHandleView.transform = backHandleView.transform.translatedBy(x: backDeltaPosition.x * cos(backAngle) + backDeltaPosition.y * sin(backAngle),
-                                                                             y: -backDeltaPosition.x * sin(backAngle) + backDeltaPosition.y * cos(backAngle))
-            let frontDeltaPosition = frontHandleView.center - pastFrontHandleViewCenter
-            let frontAngle = atan2(frontHandleView.transform.b, frontHandleView.transform.a)
-            frontHandleView.transform = frontHandleView.transform.translatedBy(x: frontDeltaPosition.x * cos(frontAngle) + frontDeltaPosition.y * sin(frontAngle),
-                                                                             y: -frontDeltaPosition.x * sin(frontAngle) + frontDeltaPosition.y * cos(frontAngle))
+            // peg inside a wall or tail inside floor area (reset handle positions)
+            backHandleView.transform = backHandleTransformPast
+            frontHandleView.transform = frontHandleTransformPast
         }
         recognizer.setTranslation(.zero, in: view)
     }
