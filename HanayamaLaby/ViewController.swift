@@ -28,6 +28,7 @@ struct Constants {
     static let faceLength: CGFloat = 60
     static let tailLength: CGFloat = 30
     static let handleLength: CGFloat = 200
+    static let centerToFace: CGFloat = (handleLength - faceLength) / 2
     static let tailOffset: CGFloat = 0.15  // percent of handle length from bottom
     static let panRotationSensitivity: CGFloat = 4  // ie. rotate handle views 4 times faster than rotation gesture
     static let pegColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
@@ -120,11 +121,11 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
     
     private func createHandleViews() {
         backHandleView.frame = CGRect(x: 0, y: 0, width: Constants.handleWidth, height: Constants.handleLength)
-        backHandleView.pegOffset = 0.15
+        backHandleView.pegOffset = 0.15  // peg near top of face
         view.addSubview(backHandleView)
 
         frontHandleView.frame = CGRect(x: 0, y: 0, width: Constants.handleWidth, height: Constants.handleLength)
-        frontHandleView.pegOffset = 0.85
+        frontHandleView.pegOffset = 0.85  // peg near bottom of face
         view.addSubview(frontHandleView)
     }
     
@@ -169,21 +170,22 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         recognizer.setTranslation(.zero, in: view)
     }
     
-    private func transformToRotate(angle: Double, about point: CGPoint) -> CGAffineTransform {
-        // rotate about point by translating (from 0,0) to point, rotating, and translating back
-        return CGAffineTransform(translationX: point.x, y: point.y).rotated(by: CGFloat(angle)).translatedBy(x: -point.x, y: -point.y)
-    }
-    
     @objc private func handleRotate(recognizer: UIRotationGestureRecognizer) {
         let limitedRotation = recognizer.rotation.limitedTo(0.02)  // limit to prevent moving through walls in one step
         // try moving first, then determine if it went through wall (reset, if it did)
         let pastBackHandleViewTransform = backHandleView.transform
-        backHandleView.transform = backHandleView.transform.rotated(by: Constants.panRotationSensitivity * limitedRotation)
+        backHandleView.transform = backHandleView.transform  // rotate about center of face
+            .translatedBy(x: 0, y: -Constants.centerToFace)
+            .rotated(by: Constants.panRotationSensitivity * limitedRotation)
+            .translatedBy(x: 0, y: Constants.centerToFace)
         let backPegPositionInPuzzleCoords = view.convert(backHandleView.pegPositionInSuperview, to: backPuzzleView)
         let backTailPositionInPuzzleCoords = view.convert(backHandleView.tailPositionInSuperview, to: backPuzzleView)
 
         let pastFrontHandleViewTransform = frontHandleView.transform
-        frontHandleView.transform = frontHandleView.transform.rotated(by: Constants.panRotationSensitivity * limitedRotation)
+        frontHandleView.transform = frontHandleView.transform  // rotate about center of face
+            .translatedBy(x: 0, y: -Constants.centerToFace)
+            .rotated(by: Constants.panRotationSensitivity * limitedRotation)
+            .translatedBy(x: 0, y: Constants.centerToFace)
         let frontPegPositionInPuzzleCoords = view.convert(frontHandleView.pegPositionInSuperview, to: frontPuzzleView)
         let frontTailPositionInPuzzleCoords = view.convert(frontHandleView.tailPositionInSuperview, to: frontPuzzleView)
 
