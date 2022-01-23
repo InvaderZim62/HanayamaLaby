@@ -31,11 +31,13 @@
       "size" : "40x40"
     },
     {
+      "filename" : "Hanayama120.png",
       "idiom" : "iphone",
       "scale" : "2x",
       "size" : "60x60"
     },
     {
+      "filename" : "Hanayama180.png",
       "idiom" : "iphone",
       "scale" : "3x",
       "size" : "60x60"
@@ -76,16 +78,19 @@
       "size" : "76x76"
     },
     {
+      "filename" : "Hanayama152.png",
       "idiom" : "ipad",
       "scale" : "2x",
       "size" : "76x76"
     },
     {
+      "filename" : "Hanayama167.png",
       "idiom" : "ipad",
       "scale" : "2x",
       "size" : "83.5x83.5"
     },
     {
+      "filename" : "Hanayama1024.png",
       "idiom" : "ios-marketing",
       "scale" : "1x",
       "size" : "1024x1024"

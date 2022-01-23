@@ -98,6 +98,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
     @IBOutlet weak var leftPuzzleView: PuzzleView!
     @IBOutlet weak var rightPuzzleView: PuzzleView!
     
+    // MARK: - Lifecycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         display = .drawing
@@ -120,6 +122,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         super.viewDidLayoutSubviews()
         updateViewFromModel()
     }
+    
+    // MARK: - Start of code
     
     private func updateViewFromModel() {
         leftPuzzleView.ringRadiusFactors = leftPuzzle.ringRadiusFactors
