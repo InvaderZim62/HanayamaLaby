@@ -13,7 +13,6 @@ class HandleView: UIView {
     
     private lazy var pegCenter = CGPoint(x: bounds.midX, y: pegOffset * Constants.faceLength)  // position in HandleView coordinates
     private lazy var tailCenter = CGPoint(x: bounds.midX, y: Constants.handleLength - Constants.tailLength)
-    private lazy var faceCenter = CGPoint(x: bounds.midX, y: Constants.faceLength / 2)
 
     var pegPositionInSuperview: CGPoint {
         convert(pegCenter, to: superview)
@@ -21,10 +20,6 @@ class HandleView: UIView {
     
     var tailPositionInSuperview: CGPoint {
         convert(tailCenter, to: superview)
-    }
-    
-    var faceCenterInSuperview: CGPoint {
-        convert(faceCenter, to: superview)
     }
     
     override init(frame: CGRect) {
