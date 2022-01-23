@@ -145,16 +145,16 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
 
         // try moving first, then determine if it went through wall (reset, if it did)
         let backHandleTransformPast = backHandleView.transform
-        let backAngle = atan2(backHandleView.transform.b, backHandleView.transform.a)
-        backHandleView.transform = backHandleView.transform.translatedBy(x: translation.x * cos(backAngle) + translation.y * sin(backAngle),
-                                                                         y: -translation.x * sin(backAngle) + translation.y * cos(backAngle))
+        let backRotation = atan2(backHandleView.transform.b, backHandleView.transform.a)
+        backHandleView.transform = backHandleView.transform.translatedBy(x: translation.x * cos(backRotation) + translation.y * sin(backRotation),
+                                                                         y: -translation.x * sin(backRotation) + translation.y * cos(backRotation))
         let backPegPositionInPuzzleCoords = view.convert(backHandleView.pegPositionInSuperview, to: backPuzzleView)
         let backTailPositionInPuzzleCoords = view.convert(backHandleView.tailPositionInSuperview, to: backPuzzleView)
 
         let frontHandleTransformPast = frontHandleView.transform
-        let frontAngle = atan2(frontHandleView.transform.b, frontHandleView.transform.a)
-        frontHandleView.transform = frontHandleView.transform.translatedBy(x: translation.x * cos(frontAngle) + translation.y * sin(frontAngle),
-                                                                         y: -translation.x * sin(frontAngle) + translation.y * cos(frontAngle))
+        let frontRotation = atan2(frontHandleView.transform.b, frontHandleView.transform.a)
+        frontHandleView.transform = frontHandleView.transform.translatedBy(x: translation.x * cos(frontRotation) + translation.y * sin(frontRotation),
+                                                                           y: -translation.x * sin(frontRotation) + translation.y * cos(frontRotation))
         let frontPegPositionInPuzzleCoords = view.convert(frontHandleView.pegPositionInSuperview, to: frontPuzzleView)
         let frontTailPositionInPuzzleCoords = view.convert(frontHandleView.tailPositionInSuperview, to: frontPuzzleView)
         
