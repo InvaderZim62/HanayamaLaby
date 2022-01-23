@@ -38,6 +38,7 @@ struct Puzzle {
                 Spoke(innerRing: 2, outerRing: 3, angle:  1.93),
                 Spoke(innerRing: 1, outerRing: 2, angle:  1.78),
                 Spoke(innerRing: 1, outerRing: 2, angle:  0.66),
+                Spoke(innerRing: 1, outerRing: 2, angle:  0.59),
                 Spoke(innerRing: 1, outerRing: 2, angle:  0.52),
                 Spoke(innerRing: 2, outerRing: 3, angle:  0.42),
                 Spoke(innerRing: 0, outerRing: 2, angle: -0.52),

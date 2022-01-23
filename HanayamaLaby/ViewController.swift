@@ -17,7 +17,6 @@
 //    incorrect conversion of the center (used in handlePan to prevent panning off-screen)
 //
 //  To do...
-//  - move rotation point from center to contact point, if contact made with either handle (might make panning/rotating easier)
 //
 
 import UIKit
@@ -72,7 +71,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         }
     }
     
-    var display = Display.image {
+    var display = Display.drawing {
         didSet {
             switch display {
             case .image:
@@ -101,6 +100,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        display = .drawing
         createHandleViews()
         
         let pan = UIPanGestureRecognizer(target: self, action: #selector(handlePan))
