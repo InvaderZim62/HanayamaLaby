@@ -28,9 +28,13 @@ struct Constants {
     static let faceLength: CGFloat = 60
     static let tailLength: CGFloat = 30
     static let handleLength: CGFloat = 200
-    static let centerToFace: CGFloat = (handleLength - faceLength) / 2
-    static let tailOffset: CGFloat = 0.15  // percent of handle length from bottom
-    static let panRotationSensitivity: CGFloat = 4  // ie. rotate handle views 4 times faster than rotation gesture
+    static let leftPegOffset: CGFloat = 0.15 * faceLength  // distance from top of handle to left handle peg
+    static let rightPegOffset: CGFloat = 0.85 * faceLength  // distance from top of handle to right handle peg
+    static let centerToFace: CGFloat = (handleLength - faceLength) / 2  // distance from center of handle to center of face
+    static let centerToTail: CGFloat = handleLength / 2 - tailLength  // distance from center of handle to start of tail section
+    static let centerToLeftPeg: CGFloat = handleLength / 2 - leftPegOffset  // distance from center of handle to left handle peg
+    static let centerToRightPeg: CGFloat = handleLength / 2 - rightPegOffset  // distance from center of handle to right handle peg
+    static let rotationSensitivity: CGFloat = 4  // ie. rotate handle views 4 times faster than rotation gesture
     static let pegColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
     static let handleColor = #colorLiteral(red: 0.7254902124, green: 0.4784313738, blue: 0.09803921729, alpha: 1)
 }
@@ -47,11 +51,27 @@ enum Display: CaseIterable {
 
 class ViewController: UIViewController, UIGestureRecognizerDelegate {
 
-    let leftPuzzle = Puzzle(isRightSide: false)
-    let rightPuzzle = Puzzle(isRightSide: true)
+    let leftPuzzle = Puzzle(isLeftSide: true)
+    let rightPuzzle = Puzzle(isLeftSide: false)
     let leftHandleView = HandleView()
     let rightHandleView = HandleView()
-
+    var leftPegContact = false
+    var rightPegContact = false
+    var leftTailContact = false
+    var rightTailContact = false
+    
+    var rotationCenterOffset: CGFloat {  // offset from center of handle
+        if leftPegContact {
+            return Constants.centerToLeftPeg
+        } else if rightPegContact {
+            return Constants.centerToRightPeg
+        } else if leftTailContact || rightTailContact {
+            return -Constants.centerToTail
+        } else {
+            return Constants.centerToFace
+        }
+    }
+    
     var display = Display.image {
         didSet {
             switch display {
@@ -121,11 +141,11 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
     
     private func createHandleViews() {
         leftHandleView.frame = CGRect(x: 0, y: 0, width: Constants.handleWidth, height: Constants.handleLength)
-        leftHandleView.pegOffset = 0.15  // peg near top of face
+        leftHandleView.pegOffset = Constants.leftPegOffset  // peg near top of face
         view.addSubview(leftHandleView)
 
         rightHandleView.frame = CGRect(x: 0, y: 0, width: Constants.handleWidth, height: Constants.handleLength)
-        rightHandleView.pegOffset = 0.85  // peg near bottom of face
+        rightHandleView.pegOffset = Constants.rightPegOffset  // peg near bottom of face
         view.addSubview(rightHandleView)
     }
     
@@ -149,20 +169,20 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         leftHandleView.transform = leftHandleView.transform.translatedBy(x: translation.x * cos(leftRotation) + translation.y * sin(leftRotation),
                                                                          y: -translation.x * sin(leftRotation) + translation.y * cos(leftRotation))
         let leftPegPositionInPuzzleCoords = view.convert(leftHandleView.pegPositionInSuperview, to: leftPuzzleView)
+        let leftPegContact = leftPuzzleView.wallPath.contains(leftPegPositionInPuzzleCoords)
         let leftTailPositionInPuzzleCoords = view.convert(leftHandleView.tailPositionInSuperview, to: leftPuzzleView)
+        let leftTailContact = leftPuzzleView.floorPath.contains(leftTailPositionInPuzzleCoords)
 
         let rightHandleTransformPast = rightHandleView.transform
         let rightRotation = atan2(rightHandleView.transform.b, rightHandleView.transform.a)
         rightHandleView.transform = rightHandleView.transform.translatedBy(x: translation.x * cos(rightRotation) + translation.y * sin(rightRotation),
                                                                            y: -translation.x * sin(rightRotation) + translation.y * cos(rightRotation))
         let rightPegPositionInPuzzleCoords = view.convert(rightHandleView.pegPositionInSuperview, to: rightPuzzleView)
+        let rightPegContact = rightPuzzleView.wallPath.contains(rightPegPositionInPuzzleCoords)
         let rightTailPositionInPuzzleCoords = view.convert(rightHandleView.tailPositionInSuperview, to: rightPuzzleView)
+        let rightTailContact = rightPuzzleView.floorPath.contains(rightTailPositionInPuzzleCoords)
         
-        if leftPuzzleView.wallPath.contains(leftPegPositionInPuzzleCoords) ||
-            leftPuzzleView.floorPath.contains(leftTailPositionInPuzzleCoords) ||
-            rightPuzzleView.wallPath.contains(rightPegPositionInPuzzleCoords) ||
-            rightPuzzleView.floorPath.contains(rightTailPositionInPuzzleCoords)
-        {
+        if leftPegContact || leftTailContact || rightPegContact || rightTailContact {
             // peg inside a wall or tail inside floor area (reset handle positions)
             leftHandleView.transform = leftHandleTransformPast
             rightHandleView.transform = rightHandleTransformPast
@@ -172,28 +192,29 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
     
     @objc private func handleRotate(recognizer: UIRotationGestureRecognizer) {
         let limitedRotation = recognizer.rotation.limitedTo(0.02)  // limit to prevent moving through walls in one step
+        let rotationOffset = rotationCenterOffset
         // try moving first, then determine if it went through wall (reset, if it did)
         let leftHandleViewTransformPast = leftHandleView.transform
         leftHandleView.transform = leftHandleView.transform  // rotate about center of face
-            .translatedBy(x: 0, y: -Constants.centerToFace)
-            .rotated(by: Constants.panRotationSensitivity * limitedRotation)
-            .translatedBy(x: 0, y: Constants.centerToFace)
+            .translatedBy(x: 0, y: -rotationOffset)
+            .rotated(by: Constants.rotationSensitivity * limitedRotation)
+            .translatedBy(x: 0, y: rotationOffset)
         let leftPegPositionInPuzzleCoords = view.convert(leftHandleView.pegPositionInSuperview, to: leftPuzzleView)
+        leftPegContact = leftPuzzleView.wallPath.contains(leftPegPositionInPuzzleCoords)
         let leftTailPositionInPuzzleCoords = view.convert(leftHandleView.tailPositionInSuperview, to: leftPuzzleView)
+        leftTailContact = leftPuzzleView.floorPath.contains(leftTailPositionInPuzzleCoords)
 
         let rightHandleViewTransformPast = rightHandleView.transform
         rightHandleView.transform = rightHandleView.transform  // rotate about center of face
-            .translatedBy(x: 0, y: -Constants.centerToFace)
-            .rotated(by: Constants.panRotationSensitivity * limitedRotation)
-            .translatedBy(x: 0, y: Constants.centerToFace)
+            .translatedBy(x: 0, y: -rotationOffset)
+            .rotated(by: Constants.rotationSensitivity * limitedRotation)
+            .translatedBy(x: 0, y: rotationOffset)
         let rightPegPositionInPuzzleCoords = view.convert(rightHandleView.pegPositionInSuperview, to: rightPuzzleView)
+        rightPegContact = rightPuzzleView.wallPath.contains(rightPegPositionInPuzzleCoords)
         let rightTailPositionInPuzzleCoords = view.convert(rightHandleView.tailPositionInSuperview, to: rightPuzzleView)
+        rightTailContact = rightPuzzleView.floorPath.contains(rightTailPositionInPuzzleCoords)
 
-        if leftPuzzleView.wallPath.contains(leftPegPositionInPuzzleCoords) ||
-            leftPuzzleView.floorPath.contains(leftTailPositionInPuzzleCoords) ||
-            rightPuzzleView.wallPath.contains(rightPegPositionInPuzzleCoords) ||
-            rightPuzzleView.floorPath.contains(rightTailPositionInPuzzleCoords)
-        {
+        if leftPegContact || leftTailContact || rightPegContact || rightTailContact {
             // handle peg inside a wall or tail inside floor (reset its transform)
             leftHandleView.transform = leftHandleViewTransformPast
             rightHandleView.transform = rightHandleViewTransformPast

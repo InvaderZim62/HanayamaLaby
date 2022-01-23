@@ -9,9 +9,9 @@ import UIKit
 
 class HandleView: UIView {
     
-    var pegOffset: CGFloat = 0  // percent face length offset from top
+    var pegOffset: CGFloat = 0  // offset from top
     
-    private lazy var pegCenter = CGPoint(x: bounds.midX, y: pegOffset * Constants.faceLength)  // position in HandleView coordinates
+    private lazy var pegCenter = CGPoint(x: bounds.midX, y: pegOffset)  // position in HandleView coordinates
     private lazy var tailCenter = CGPoint(x: bounds.midX, y: Constants.handleLength - Constants.tailLength)
 
     var pegPositionInSuperview: CGPoint {
