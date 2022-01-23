@@ -59,6 +59,9 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
     var leftTailContact = false
     var rightTailContact = false
     
+    lazy var leftWallPath = leftPuzzleView.wallPath  // compute once since it doesn't change; lazy since bounds needed to be set
+    lazy var rightWallPath = rightPuzzleView.wallPath
+    
     var rotationCenterOffset: CGFloat {  // offset from center of handle
         if leftPegContact {
             return Constants.centerToLeftPeg
@@ -173,7 +176,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         leftHandleView.transform = leftHandleView.transform.translatedBy(x: translation.x * cos(leftRotation) + translation.y * sin(leftRotation),
                                                                          y: -translation.x * sin(leftRotation) + translation.y * cos(leftRotation))
         let leftPegPositionInPuzzleCoords = view.convert(leftHandleView.pegPositionInSuperview, to: leftPuzzleView)
-        let leftPegContact = leftPuzzleView.wallPath.contains(leftPegPositionInPuzzleCoords)
+        let leftPegContact = leftWallPath.contains(leftPegPositionInPuzzleCoords)
         let leftTailPositionInPuzzleCoords = view.convert(leftHandleView.tailPositionInSuperview, to: leftPuzzleView)
         let leftTailContact = leftPuzzleView.floorPath.contains(leftTailPositionInPuzzleCoords)
 
@@ -182,7 +185,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         rightHandleView.transform = rightHandleView.transform.translatedBy(x: translation.x * cos(rightRotation) + translation.y * sin(rightRotation),
                                                                            y: -translation.x * sin(rightRotation) + translation.y * cos(rightRotation))
         let rightPegPositionInPuzzleCoords = view.convert(rightHandleView.pegPositionInSuperview, to: rightPuzzleView)
-        let rightPegContact = rightPuzzleView.wallPath.contains(rightPegPositionInPuzzleCoords)
+        let rightPegContact = rightWallPath.contains(rightPegPositionInPuzzleCoords)
         let rightTailPositionInPuzzleCoords = view.convert(rightHandleView.tailPositionInSuperview, to: rightPuzzleView)
         let rightTailContact = rightPuzzleView.floorPath.contains(rightTailPositionInPuzzleCoords)
         
@@ -204,7 +207,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
             .rotated(by: Constants.rotationSensitivity * limitedRotation)
             .translatedBy(x: 0, y: rotationOffset)
         let leftPegPositionInPuzzleCoords = view.convert(leftHandleView.pegPositionInSuperview, to: leftPuzzleView)
-        leftPegContact = leftPuzzleView.wallPath.contains(leftPegPositionInPuzzleCoords)
+        leftPegContact = leftWallPath.contains(leftPegPositionInPuzzleCoords)
         let leftTailPositionInPuzzleCoords = view.convert(leftHandleView.tailPositionInSuperview, to: leftPuzzleView)
         leftTailContact = leftPuzzleView.floorPath.contains(leftTailPositionInPuzzleCoords)
 
@@ -214,7 +217,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
             .rotated(by: Constants.rotationSensitivity * limitedRotation)
             .translatedBy(x: 0, y: rotationOffset)
         let rightPegPositionInPuzzleCoords = view.convert(rightHandleView.pegPositionInSuperview, to: rightPuzzleView)
-        rightPegContact = rightPuzzleView.wallPath.contains(rightPegPositionInPuzzleCoords)
+        rightPegContact = rightWallPath.contains(rightPegPositionInPuzzleCoords)
         let rightTailPositionInPuzzleCoords = view.convert(rightHandleView.tailPositionInSuperview, to: rightPuzzleView)
         rightTailContact = rightPuzzleView.floorPath.contains(rightTailPositionInPuzzleCoords)
 

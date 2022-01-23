@@ -8,7 +8,8 @@
 import UIKit
 
 struct PuzzleConst {
-    static let wallWidth: CGFloat = 10
+    static let wallWidth: CGFloat = 12  // thicker walls for keeping pegs from touching drawn walls
+    static let drawingWallWidth: CGFloat = 10
     static let wallColor = #colorLiteral(red: 0.501960814, green: 0.501960814, blue: 0.501960814, alpha: 1)
     static let floorColor = #colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1)
 }
@@ -18,8 +19,13 @@ class PuzzleView: UIView {
     var ringRadiusFactors = [Double]()
     var spokes = [Spoke]()
     var arcs = [Arc]()
-    
-    private(set) var wallPath = UIBezierPath()
+    var wallPath: UIBezierPath {  // duplicate of puzzle drawing with thicker walls (use for determining early peg contact)
+        let path = UIBezierPath()
+        path.append(createSpokesWithWidth(PuzzleConst.wallWidth))
+        path.append(createArcsWithWidth(PuzzleConst.wallWidth))
+        return path
+    }
+
     private(set) var floorPath = UIBezierPath()
     private lazy var puzzleCenter = CGPoint(x: bounds.midX, y: bounds.midY)
     
@@ -30,13 +36,12 @@ class PuzzleView: UIView {
 
     override func draw(_ rect: CGRect) {
         drawFloor()
-        drawSpokes()
-        drawArcs()
+        let path = UIBezierPath()
+        path.append(createSpokesWithWidth(PuzzleConst.drawingWallWidth))
+        path.append(createArcsWithWidth(PuzzleConst.drawingWallWidth))
         
         PuzzleConst.wallColor.setFill()
-        wallPath.fill()
-//        UIColor.black.setStroke()
-//        wallPath.stroke()
+        path.fill()
     }
     
     private func drawFloor() {
@@ -50,7 +55,7 @@ class PuzzleView: UIView {
         floorPath = circle
         // remove center hole
         if let radiusFactor = ringRadiusFactors.first {  // since called before ringRadiusFactors is set
-            let radius = 0.96 * (radiusFactor * bounds.width / 2 - PuzzleConst.wallWidth / 2)
+            let radius = 0.96 * (radiusFactor * bounds.width / 2 - PuzzleConst.drawingWallWidth / 2)
             let hole = UIBezierPath(arcCenter: puzzleCenter,
                                     radius: radius,
                                     startAngle: 0,
@@ -65,20 +70,23 @@ class PuzzleView: UIView {
         }
     }
     
-    private func drawSpokes() {
-        let halfWidth = PuzzleConst.wallWidth / 2
+    private func createSpokesWithWidth(_ wallWidth: CGFloat) -> UIBezierPath {
+        let halfWidth = wallWidth / 2
+        let bezierPath = UIBezierPath()
         for spoke in spokes {
             let innerRadius = ringRadiusFactors[spoke.innerRing] * bounds.width / 2
             let outerRadius = ringRadiusFactors[spoke.outerRing] * bounds.width / 2
-            let rect = CGRect(x: puzzleCenter.x + innerRadius, y: puzzleCenter.y - halfWidth, width: outerRadius - innerRadius, height: PuzzleConst.wallWidth)
+            let rect = CGRect(x: puzzleCenter.x + innerRadius, y: puzzleCenter.y - halfWidth, width: outerRadius - innerRadius, height: wallWidth)
             let shape = UIBezierPath(roundedRect: rect, cornerRadius: 0)
             shape.apply(transformToRotate(angle: spoke.angle, about: puzzleCenter))
-            wallPath.append(shape)
+            bezierPath.append(shape)
         }
+        return bezierPath
     }
     
-    private func drawArcs() {
-        let halfWidth = PuzzleConst.wallWidth / 2
+    private func createArcsWithWidth(_ wallWidth: CGFloat) -> UIBezierPath {
+        let halfWidth = wallWidth / 2
+        let bezierPath = UIBezierPath()
         for arc in arcs {
             let radius = ringRadiusFactors[arc.ring] * bounds.width / 2
             let shape = UIBezierPath()
@@ -111,7 +119,8 @@ class PuzzleView: UIView {
                          endAngle: arc.startAngle,
                          clockwise: true)
             shape.close()  // needed to make "contains" work
-            wallPath.append(shape)
+            bezierPath.append(shape)
         }
+        return bezierPath
     }
 }
