@@ -24,8 +24,8 @@ struct Puzzle {
     let arcs: [Arc]
     let ringRadiusFactors = [0.41, 0.56, 0.73, 0.90]  // percent view half-width
     
-    init(isFront: Bool) {
-        if isFront {
+    init(isRightSide: Bool) {
+        if isRightSide {
             spokes = [
                 Spoke(innerRing: 2, outerRing: 3, angle: -1.22),
                 Spoke(innerRing: 0, outerRing: 1, angle: -0.56),
@@ -57,7 +57,7 @@ struct Puzzle {
                 Arc(ring: 0, startAngle:  1.51, endAngle:  1.61),
                 Arc(ring: 0, startAngle:  2.13, endAngle: -2.87)
             ]
-        } else {  // is back
+        } else {  // is left side
             spokes = [
                 Spoke(innerRing: 1, outerRing: 2, angle: -1.60),
                 Spoke(innerRing: 0, outerRing: 1, angle: -2.06),

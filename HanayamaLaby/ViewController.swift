@@ -47,37 +47,37 @@ enum Display: CaseIterable {
 
 class ViewController: UIViewController, UIGestureRecognizerDelegate {
 
-    let backPuzzle = Puzzle(isFront: false)
-    let frontPuzzle = Puzzle(isFront: true)
-    let backHandleView = HandleView()
-    let frontHandleView = HandleView()
+    let leftPuzzle = Puzzle(isRightSide: false)
+    let rightPuzzle = Puzzle(isRightSide: true)
+    let leftHandleView = HandleView()
+    let rightHandleView = HandleView()
 
     var display = Display.image {
         didSet {
             switch display {
             case .image:
-                backImage.isHidden = false
-                frontImage.isHidden = false
-                backPuzzleView.alpha = 0
-                frontPuzzleView.alpha = 0
+                leftImage.isHidden = false
+                rightImage.isHidden = false
+                leftPuzzleView.alpha = 0
+                rightPuzzleView.alpha = 0
             case .drawing:
-                backImage.isHidden = true
-                frontImage.isHidden = true
-                backPuzzleView.alpha = 1
-                frontPuzzleView.alpha = 1
+                leftImage.isHidden = true
+                rightImage.isHidden = true
+                leftPuzzleView.alpha = 1
+                rightPuzzleView.alpha = 1
             case .both:
-                backImage.isHidden = false
-                frontImage.isHidden = false
-                backPuzzleView.alpha = 0.4
-                frontPuzzleView.alpha = 0.4
+                leftImage.isHidden = false
+                rightImage.isHidden = false
+                leftPuzzleView.alpha = 0.4
+                rightPuzzleView.alpha = 0.4
             }
         }
     }
 
-    @IBOutlet weak var backImage: UIImageView!
-    @IBOutlet weak var frontImage: UIImageView!
-    @IBOutlet weak var backPuzzleView: PuzzleView!
-    @IBOutlet weak var frontPuzzleView: PuzzleView!
+    @IBOutlet weak var leftImage: UIImageView!
+    @IBOutlet weak var rightImage: UIImageView!
+    @IBOutlet weak var leftPuzzleView: PuzzleView!
+    @IBOutlet weak var rightPuzzleView: PuzzleView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -91,9 +91,9 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         rotate.delegate = self
         view.addGestureRecognizer(rotate)
 
-        // debug - start with handles outside puzzles (may also want to set "Back Puzzle View" horizontal center to +140 in storyboard)
-//        backHandleView.transform = backHandleView.transform.translatedBy(x: 30, y: 30)
-//        frontHandleView.transform = frontHandleView.transform.translatedBy(x: 60, y: 30)
+        // debug - start with handles outside puzzles (may also want to set "Left Puzzle View" horizontal center to +140 in storyboard)
+//        leftHandleView.transform = leftHandleView.transform.translatedBy(x: 30, y: 30)
+//        rightHandleView.transform = rightHandleView.transform.translatedBy(x: 60, y: 30)
     }
     
     override func viewDidLayoutSubviews() {  // called when handleView's transform changes (frequently)
@@ -102,31 +102,31 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
     }
     
     private func updateViewFromModel() {
-        backPuzzleView.ringRadiusFactors = backPuzzle.ringRadiusFactors
-        backPuzzleView.spokes = backPuzzle.spokes
-        backPuzzleView.arcs = backPuzzle.arcs
+        leftPuzzleView.ringRadiusFactors = leftPuzzle.ringRadiusFactors
+        leftPuzzleView.spokes = leftPuzzle.spokes
+        leftPuzzleView.arcs = leftPuzzle.arcs
         
-        frontPuzzleView.ringRadiusFactors = frontPuzzle.ringRadiusFactors
-        frontPuzzleView.spokes = frontPuzzle.spokes
-        frontPuzzleView.arcs = frontPuzzle.arcs
+        rightPuzzleView.ringRadiusFactors = rightPuzzle.ringRadiusFactors
+        rightPuzzleView.spokes = rightPuzzle.spokes
+        rightPuzzleView.arcs = rightPuzzle.arcs
 
-        if backHandleView.transform == .identity {
+        if leftHandleView.transform == .identity {
             let midFacePoint = CGPoint(x: Constants.handleWidth / 2, y: Constants.faceLength / 2)
-            let backTranslate = backPuzzleView.center - midFacePoint
-            let frontTranslate = frontPuzzleView.center - midFacePoint
-            backHandleView.transform = backHandleView.transform.translatedBy(x: backTranslate.x, y: backTranslate.y)
-            frontHandleView.transform = frontHandleView.transform.translatedBy(x: frontTranslate.x, y: frontTranslate.y)
+            let leftTranslate = leftPuzzleView.center - midFacePoint
+            let rightTranslate = rightPuzzleView.center - midFacePoint
+            leftHandleView.transform = leftHandleView.transform.translatedBy(x: leftTranslate.x, y: leftTranslate.y)
+            rightHandleView.transform = rightHandleView.transform.translatedBy(x: rightTranslate.x, y: rightTranslate.y)
         }
     }
     
     private func createHandleViews() {
-        backHandleView.frame = CGRect(x: 0, y: 0, width: Constants.handleWidth, height: Constants.handleLength)
-        backHandleView.pegOffset = 0.15  // peg near top of face
-        view.addSubview(backHandleView)
+        leftHandleView.frame = CGRect(x: 0, y: 0, width: Constants.handleWidth, height: Constants.handleLength)
+        leftHandleView.pegOffset = 0.15  // peg near top of face
+        view.addSubview(leftHandleView)
 
-        frontHandleView.frame = CGRect(x: 0, y: 0, width: Constants.handleWidth, height: Constants.handleLength)
-        frontHandleView.pegOffset = 0.85  // peg near bottom of face
-        view.addSubview(frontHandleView)
+        rightHandleView.frame = CGRect(x: 0, y: 0, width: Constants.handleWidth, height: Constants.handleLength)
+        rightHandleView.pegOffset = 0.85  // peg near bottom of face
+        view.addSubview(rightHandleView)
     }
     
     // MARK: - Gesture actions
@@ -135,37 +135,37 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         let translation = recognizer.translation(in: view).limitedTo(PuzzleConst.wallWidth / 2)  // limit to prevent moving through walls in one step
         
         // don't allow panning off screen (with 10-point buffer)
-        let backHandleViewCenter = backHandleView.convert(backHandleView.center, to: view)  // convert, since .center doesn't change with transform.translatedBy
-        let backTargetPosition = backHandleViewCenter + translation
-        let frontHandleViewCenter = frontHandleView.convert(frontHandleView.center, to: view)
-        let frontTargetPosition = frontHandleViewCenter + translation
-        if !view.frame.insetBy(dx: 10, dy: 10).contains(backTargetPosition) || !view.frame.insetBy(dx: 10, dy: 10).contains(frontTargetPosition) {
+        let leftHandleViewCenter = leftHandleView.convert(leftHandleView.center, to: view)  // convert, since .center doesn't change with transform.translatedBy
+        let leftTargetPosition = leftHandleViewCenter + translation
+        let rightHandleViewCenter = rightHandleView.convert(rightHandleView.center, to: view)
+        let rightTargetPosition = rightHandleViewCenter + translation
+        if !view.frame.insetBy(dx: 10, dy: 10).contains(leftTargetPosition) || !view.frame.insetBy(dx: 10, dy: 10).contains(rightTargetPosition) {
             return
         }
 
         // try moving first, then determine if it went through wall (reset, if it did)
-        let backHandleTransformPast = backHandleView.transform
-        let backRotation = atan2(backHandleView.transform.b, backHandleView.transform.a)
-        backHandleView.transform = backHandleView.transform.translatedBy(x: translation.x * cos(backRotation) + translation.y * sin(backRotation),
-                                                                         y: -translation.x * sin(backRotation) + translation.y * cos(backRotation))
-        let backPegPositionInPuzzleCoords = view.convert(backHandleView.pegPositionInSuperview, to: backPuzzleView)
-        let backTailPositionInPuzzleCoords = view.convert(backHandleView.tailPositionInSuperview, to: backPuzzleView)
+        let leftHandleTransformPast = leftHandleView.transform
+        let leftRotation = atan2(leftHandleView.transform.b, leftHandleView.transform.a)
+        leftHandleView.transform = leftHandleView.transform.translatedBy(x: translation.x * cos(leftRotation) + translation.y * sin(leftRotation),
+                                                                         y: -translation.x * sin(leftRotation) + translation.y * cos(leftRotation))
+        let leftPegPositionInPuzzleCoords = view.convert(leftHandleView.pegPositionInSuperview, to: leftPuzzleView)
+        let leftTailPositionInPuzzleCoords = view.convert(leftHandleView.tailPositionInSuperview, to: leftPuzzleView)
 
-        let frontHandleTransformPast = frontHandleView.transform
-        let frontRotation = atan2(frontHandleView.transform.b, frontHandleView.transform.a)
-        frontHandleView.transform = frontHandleView.transform.translatedBy(x: translation.x * cos(frontRotation) + translation.y * sin(frontRotation),
-                                                                           y: -translation.x * sin(frontRotation) + translation.y * cos(frontRotation))
-        let frontPegPositionInPuzzleCoords = view.convert(frontHandleView.pegPositionInSuperview, to: frontPuzzleView)
-        let frontTailPositionInPuzzleCoords = view.convert(frontHandleView.tailPositionInSuperview, to: frontPuzzleView)
+        let rightHandleTransformPast = rightHandleView.transform
+        let rightRotation = atan2(rightHandleView.transform.b, rightHandleView.transform.a)
+        rightHandleView.transform = rightHandleView.transform.translatedBy(x: translation.x * cos(rightRotation) + translation.y * sin(rightRotation),
+                                                                           y: -translation.x * sin(rightRotation) + translation.y * cos(rightRotation))
+        let rightPegPositionInPuzzleCoords = view.convert(rightHandleView.pegPositionInSuperview, to: rightPuzzleView)
+        let rightTailPositionInPuzzleCoords = view.convert(rightHandleView.tailPositionInSuperview, to: rightPuzzleView)
         
-        if backPuzzleView.wallPath.contains(backPegPositionInPuzzleCoords) ||
-            backPuzzleView.floorPath.contains(backTailPositionInPuzzleCoords) ||
-            frontPuzzleView.wallPath.contains(frontPegPositionInPuzzleCoords) ||
-            frontPuzzleView.floorPath.contains(frontTailPositionInPuzzleCoords)
+        if leftPuzzleView.wallPath.contains(leftPegPositionInPuzzleCoords) ||
+            leftPuzzleView.floorPath.contains(leftTailPositionInPuzzleCoords) ||
+            rightPuzzleView.wallPath.contains(rightPegPositionInPuzzleCoords) ||
+            rightPuzzleView.floorPath.contains(rightTailPositionInPuzzleCoords)
         {
             // peg inside a wall or tail inside floor area (reset handle positions)
-            backHandleView.transform = backHandleTransformPast
-            frontHandleView.transform = frontHandleTransformPast
+            leftHandleView.transform = leftHandleTransformPast
+            rightHandleView.transform = rightHandleTransformPast
         }
         recognizer.setTranslation(.zero, in: view)
     }
@@ -173,30 +173,30 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
     @objc private func handleRotate(recognizer: UIRotationGestureRecognizer) {
         let limitedRotation = recognizer.rotation.limitedTo(0.02)  // limit to prevent moving through walls in one step
         // try moving first, then determine if it went through wall (reset, if it did)
-        let pastBackHandleViewTransform = backHandleView.transform
-        backHandleView.transform = backHandleView.transform  // rotate about center of face
+        let leftHandleViewTransformPast = leftHandleView.transform
+        leftHandleView.transform = leftHandleView.transform  // rotate about center of face
             .translatedBy(x: 0, y: -Constants.centerToFace)
             .rotated(by: Constants.panRotationSensitivity * limitedRotation)
             .translatedBy(x: 0, y: Constants.centerToFace)
-        let backPegPositionInPuzzleCoords = view.convert(backHandleView.pegPositionInSuperview, to: backPuzzleView)
-        let backTailPositionInPuzzleCoords = view.convert(backHandleView.tailPositionInSuperview, to: backPuzzleView)
+        let leftPegPositionInPuzzleCoords = view.convert(leftHandleView.pegPositionInSuperview, to: leftPuzzleView)
+        let leftTailPositionInPuzzleCoords = view.convert(leftHandleView.tailPositionInSuperview, to: leftPuzzleView)
 
-        let pastFrontHandleViewTransform = frontHandleView.transform
-        frontHandleView.transform = frontHandleView.transform  // rotate about center of face
+        let rightHandleViewTransformPast = rightHandleView.transform
+        rightHandleView.transform = rightHandleView.transform  // rotate about center of face
             .translatedBy(x: 0, y: -Constants.centerToFace)
             .rotated(by: Constants.panRotationSensitivity * limitedRotation)
             .translatedBy(x: 0, y: Constants.centerToFace)
-        let frontPegPositionInPuzzleCoords = view.convert(frontHandleView.pegPositionInSuperview, to: frontPuzzleView)
-        let frontTailPositionInPuzzleCoords = view.convert(frontHandleView.tailPositionInSuperview, to: frontPuzzleView)
+        let rightPegPositionInPuzzleCoords = view.convert(rightHandleView.pegPositionInSuperview, to: rightPuzzleView)
+        let rightTailPositionInPuzzleCoords = view.convert(rightHandleView.tailPositionInSuperview, to: rightPuzzleView)
 
-        if backPuzzleView.wallPath.contains(backPegPositionInPuzzleCoords) ||
-            backPuzzleView.floorPath.contains(backTailPositionInPuzzleCoords) ||
-            frontPuzzleView.wallPath.contains(frontPegPositionInPuzzleCoords) ||
-            frontPuzzleView.floorPath.contains(frontTailPositionInPuzzleCoords)
+        if leftPuzzleView.wallPath.contains(leftPegPositionInPuzzleCoords) ||
+            leftPuzzleView.floorPath.contains(leftTailPositionInPuzzleCoords) ||
+            rightPuzzleView.wallPath.contains(rightPegPositionInPuzzleCoords) ||
+            rightPuzzleView.floorPath.contains(rightTailPositionInPuzzleCoords)
         {
             // handle peg inside a wall or tail inside floor (reset its transform)
-            backHandleView.transform = pastBackHandleViewTransform
-            frontHandleView.transform = pastFrontHandleViewTransform
+            leftHandleView.transform = leftHandleViewTransformPast
+            rightHandleView.transform = rightHandleViewTransformPast
         }
         recognizer.rotation = 0  // reset, to use incremental rotations
     }
