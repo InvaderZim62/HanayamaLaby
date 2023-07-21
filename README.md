@@ -1,4 +1,4 @@
-# Hanayama Labyrinth
+# Hanayama Laby
 
 This is a knock-off of a two-sided puzzle made of metal from Labyrinth Games & Puzzles.  The original puzzle
 requires you to separate two rings.  One ring contains a two sides puzzle, and the other ring has pegs that
