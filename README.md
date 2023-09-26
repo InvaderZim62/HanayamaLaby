@@ -7,6 +7,6 @@ using two bars that move together.  The black parts of the bars cannot pass thou
 
 Use two fingers to pan and rotate the bar.
 
-![Hanyama](https://github.com/InvaderZim62/HanayamaLaby/assets/34785252/da44ee58-e5e8-490e-bc15-db14a98d7d66)
+![Hanyama](https://github.com/InvaderZim62/HanayamaLaby/assets/34785252/f6b0c58b-d1f5-4960-adf0-3d2b8f02c661)
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-![Hanayama Laby](https://github.com/InvaderZim62/HanayamaLaby/assets/34785252/7dbfc11c-2414-4d47-935f-b73fe6e11a23)
+![Hanayama Laby](https://github.com/InvaderZim62/HanayamaLaby/assets/34785252/20b1a59c-7b29-4c73-998f-777f4085bb8a)
